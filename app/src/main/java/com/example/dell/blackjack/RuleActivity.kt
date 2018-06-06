@@ -11,7 +11,7 @@ class RuleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rule)
 
-        back.setOnClickListener{
+        back.setOnClickListener {
             finish()
         }
 

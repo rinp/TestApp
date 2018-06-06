@@ -27,36 +27,36 @@ class MainActivity : AppCompatActivity() {
 
         //カードを引く
         hit.setOnClickListener {
-            drawCard(hand,handZone,true)
+            drawCard(hand, handZone, true)
             countCards(endsCards)
-            val pCS = calcCardScore(hand,playerCS,true)
-            val dCS = calcCardScore(dealer,dealerCS,false)
+            val pCS = calcCardScore(hand, playerCS, true)
+            val dCS = calcCardScore(dealer, dealerCS, false)
 
             //ブラックジャックの時はhitを止める(standを押させる)
-            if( pCS == BLACKJACK){
+            if (pCS == BLACKJACK) {
                 hit.isEnabled = false
                 return@setOnClickListener
             }
 
             //22以上<Bust>で敗北
-            if(pCS > BLACKJACK){
+            if (pCS > BLACKJACK) {
                 openCard(dealerZone)
                 hit.isEnabled = false
                 stand.isEnabled = false
-                result.text = DUELRESLT[cmpScore(pCS,dCS, player)]
+                result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
                 nextSet()
             }
         }
 
         //今の持ち札で対戦
-        stand.setOnClickListener{
+        stand.setOnClickListener {
             stand.isEnabled = false
             hit.isEnabled = false
-            drawCard(dealer,dealerZone,false)
+            drawCard(dealer, dealerZone, false)
             //結果
-            val pCS = calcCardScore(hand,playerCS,true)
-            val dCS = calcCardScore(dealer,dealerCS,false)
-            result.text = DUELRESLT[cmpScore(pCS,dCS, player)]
+            val pCS = calcCardScore(hand, playerCS, true)
+            val dCS = calcCardScore(dealer, dealerCS, false)
+            result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
 
             nextSet()
         }
@@ -78,13 +78,13 @@ class MainActivity : AppCompatActivity() {
         //チップ不足
         socView.setOnClickListener {}//下位画面ボタン操作制御
         backTop2.setOnClickListener {
-            val intent = Intent(this,StartMenu::class.java)
+            val intent = Intent(this, StartMenu::class.java)
             finish()
             startActivity(intent)
         }
 
         //ヘルプ表示/ゲーム画面再表示
-        help.setOnClickListener{
+        help.setOnClickListener {
             capZone.visibility = View.VISIBLE
         }
         backGame1.setOnClickListener {
@@ -94,11 +94,12 @@ class MainActivity : AppCompatActivity() {
         //広告
         ad02.loadAd(AdRequest.Builder().build())
     }
+
     /**
      * 場のリセット(初回:0・継続:1)
      */
     @SuppressLint("SetTextI18n")
-    private fun zoneReset(status:Int){
+    private fun zoneReset(status: Int) {
         //場のカード情報の削除
         handZone.removeAllViews()
         dealerZone.removeAllViews()
@@ -106,10 +107,10 @@ class MainActivity : AppCompatActivity() {
         hit.text = "hit"
         stand.text = "stand"
         //残りチップの判定
-        if(!player.callChip()){
+        if (!player.callChip()) {
             socView.visibility = View.VISIBLE
         }
-        if(status == 0){
+        if (status == 0) {
             setCaption(caption00)
             deck.init();
         }
@@ -132,8 +133,8 @@ class MainActivity : AppCompatActivity() {
         ownChip.text = "chip: $chip"
         bet.text = "bet: ${player.betChip}"
         //初回カードの判定
-        val playerFstScore= calcpt(hand,false)
-        val dealerFstScore= calcpt(dealer,true)
+        val playerFstScore = calcpt(hand, false)
+        val dealerFstScore = calcpt(dealer, true)
         if (playerFstScore == BLACKJACK) {
             //プレイヤー初回BJなら即勝負を掛けれるようにしとく(なくても良いやつ？)
             hit.isEnabled = false
@@ -143,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             //ディーラーBJだと強制勝負
             openCard(dealerZone)
             dealerCS.text = "Dealer:$BLACKJACK <BJ>"
-            calcCardScore(hand,playerCS,true)
+            calcCardScore(hand, playerCS, true)
             //プレイヤーの操作は不可
             hit.isEnabled = false
             hit.text = "BJ"
@@ -155,7 +156,7 @@ class MainActivity : AppCompatActivity() {
      * 次のゲームを始める
      */
     @SuppressLint("SetTextI18n")
-    private fun nextSet(){
+    private fun nextSet() {
         ownChip.text = "chip: ${player.ownChip}"
         setChip(this.applicationContext, PLAYERMONEY, player.ownChip)
         nextGame.visibility = View.VISIBLE
@@ -176,6 +177,7 @@ class MainActivity : AppCompatActivity() {
             goToNextLevel()
         }
     }
+
     private fun newInterstitialAd(): InterstitialAd {
         return InterstitialAd(this).apply {
             adUnitId = getString(R.string.interstitial_ad_unit_id)
@@ -187,6 +189,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToLoad(errorCode: Int) {
                     backTop1.isEnabled = true
                 }
+
                 override fun onAdClosed() {
                     // Proceed to the next level.
                     goToNextLevel()
@@ -194,6 +197,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun loadInterstitial() {
         // Disable the next level button and load the ad.
         backTop1.isEnabled = false
@@ -202,13 +206,14 @@ class MainActivity : AppCompatActivity() {
                 .build()
         interstitialAd?.loadAd(adRequest)
     }
+
     private fun goToNextLevel() {
         // Show the next level and reload the ad to prepare for the level after.
 //        level.text = "Level " + (++currentLevel)
         interstitialAd = newInterstitialAd()
         loadInterstitial()
         player.resetBet()
-        val intent = Intent(this,StartMenu::class.java)
+        val intent = Intent(this, StartMenu::class.java)
         startActivity(intent)
         finish()
     }
