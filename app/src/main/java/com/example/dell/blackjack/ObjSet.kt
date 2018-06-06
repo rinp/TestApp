@@ -38,21 +38,35 @@ val DUELRESLT = listOf("BJWIN", "WIN", "LOSE", "PUSH") //画面書き込み用
 
 const val HANDNUM: Int = 2 //初回の手札の数
 
-class Deck {
+data class Deck(private val deckCount: Int = 2) {
     private lateinit var cards: List<Trump>
+    private var i = 0
     private val suits = listOf("dia", "heart", "spade", "club")
-    private val deckCount: Int = 2 //使用するデッキの数
 
     //トランプデッキの生成
-    fun init(count: Int = deckCount) {
-        this.cards= (1..count).flatMap {
+    fun init() {
+        this.cards = (1..deckCount).flatMap {
             (1..13).flatMap { num ->
                 suits.map { suit ->
                     Trump(suit = suit, num = num)
                 }
             }
         }.shuffled()
+        i = 0
     }
+
+    private fun isEmpty(): Boolean {
+        return i >= cards.count()
+    }
+
+    fun dealCard(): Trump {
+        if (isEmpty()) {
+            init()
+        }
+        return cards[i++]
+    }
+
+    fun remainingCardCount() = "count:${cards.count()}"
 
 }
 

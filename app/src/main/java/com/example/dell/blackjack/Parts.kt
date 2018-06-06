@@ -19,7 +19,7 @@ var deck = Deck()
 /*処理*/
 //キャプションのセット
 @SuppressLint("SetTextI18n")
-fun setCaption(text:TextView){
+fun setCaption(text: TextView) {
     text.text =
             """
     |【RANK】
@@ -37,15 +37,10 @@ fun setCaption(text:TextView){
 
 //トランプセットの残り枚数を更新する
 @SuppressLint("SetTextI18n")
-fun countCards(view: TextView){
-    if(view.id == endsCards){
-        view.text = "count:${trumps.count()}"
+fun countCards(view: TextView) {
+    if (view.id == endsCards) {
+        view.text = deck.remainingCardCount()
     }
-}
-
-//引いたカードをデッキから削除
-fun remTrump(){
-    if(trumps.firstOrNull() != null) trumps.remove(trumps.first())
 }
 
 /**
@@ -54,43 +49,34 @@ fun remTrump(){
  * @user 手札を格納する変数
  */
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-fun makeHand(userZone: LinearLayout, user: MutableList<Hand>,playerFlg: Boolean) {
+fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean) {
     user.clear()
     var score = 0
-    for(i in 1..HANDNUM){
-        //山札が0枚の時はデッキの再生成
-        if(trumps.size == 0 ){
-            deck.init();
-        }
-        if(trumps.firstOrNull() != null) {
-            val trump = trumps.first()
-            score += trump.num
-            user += Hand(userZone.linearLayout {
-                textView {
-                    backgroundColor = Color.parseColor(CARDF)
-                    text = "${trumps.first().suit}\n${trumps.first().num}"
-                    if(i > 1 && !playerFlg){
-                        //2枚目以降ディーラー
-                        backgroundColor = Color.parseColor(CARDB)
-                        text = ""
-                    }
-                    gravity = Gravity.LEFT
-                }.lparams(width = userZone.width) {
-                    width = dip(CARDW)
-                    height = dip(CARDH)
-                    gravity = Gravity.LEFT
-                    horizontalMargin = dip(5)
-                    verticalMargin = dip(5)
+    for (i in 1..HANDNUM) {
+        val trump = deck.dealCard()
+        score += trump.num
+        user += Hand(userZone.linearLayout {
+            textView {
+                backgroundColor = Color.parseColor(CARDF)
+                text = "${trumps.first().suit}\n${trumps.first().num}"
+                if (i > 1 && !playerFlg) {
+                    //2枚目以降ディーラー
+                    backgroundColor = Color.parseColor(CARDB)
+                    text = ""
                 }
-            },trump, i > 1 && !playerFlg)
-            remTrump()
-        }else{
-            break
-        }
+                gravity = Gravity.LEFT
+            }.lparams(width = userZone.width) {
+                width = dip(CARDW)
+                height = dip(CARDH)
+                gravity = Gravity.LEFT
+                horizontalMargin = dip(5)
+                verticalMargin = dip(5)
+            }
+        }, trump, i > 1 && !playerFlg)
     }
-    if(playerFlg){
+    if (playerFlg) {
         dpVs[PLAYER] = score
-    }else{
+    } else {
         dpVs[DEALER] = score
     }
 
@@ -103,35 +89,36 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>,playerFlg: Boolean)
 @SuppressLint("SetTextI18n")
 fun drawCard(user: MutableList<Hand>, userZone: LinearLayout, playerFlg: Boolean) {
     //山札が0枚の時はデッキの再生成
-    if(trumps.size == 0 ){
-        deck.init();
+    if (trumps.size == 0) {
+        deck.init()
     }
 
-    if(!playerFlg){
+    if (!playerFlg) {
         //ディーラーパターン(条件を満たすまでカードを引き続ける)
         openCard(userZone)
-        val playerscore = calcpt(hand,false)
-        var dealerScore = calcpt(dealer,false)
-        while(dealerScore<DEALSTOPSCR){
+        val playerscore = calcpt(hand, false)
+        var dealerScore = calcpt(dealer, false)
+        while (dealerScore < DEALSTOPSCR) {
             //無駄に引く必要がなかったら止める todo:ルール的にあってる？
-            if(playerscore<dealerScore){
+            if (playerscore < dealerScore) {
                 return
             }
-            addCard(user,userZone)
-            dealerScore = calcpt(dealer,false)
+            addCard(user, userZone)
+            dealerScore = calcpt(dealer, false)
         }
-    }else{
+    } else {
         //プレイヤーパターン(一度だけカードを引く)
-        addCard(user,userZone)
+        addCard(user, userZone)
     }
 }
 
 //手札にデッキの一番上の情報を記載したカードを追加する
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-fun addCard(user: MutableList<Hand>, userZone: LinearLayout){
-    user += Hand(userZone.linearLayout{
+fun addCard(user: MutableList<Hand>, userZone: LinearLayout) {
+    val card = deck.dealCard()
+    user += Hand(userZone.linearLayout {
         textView {
-            text = "${trumps.first().suit}\n${trumps.first().num}"
+            text = "${card.suit}\n${card.num}"
             gravity = Gravity.LEFT
             backgroundColor = Color.parseColor(CARDF)
         }.lparams(width = userZone.width) {
@@ -141,18 +128,17 @@ fun addCard(user: MutableList<Hand>, userZone: LinearLayout){
             horizontalMargin = dip(5)
             verticalMargin = dip(5)
         }
-    },trumps.first(),false)
-    remTrump()
+    }, card, false)
 }
 
 //裏返しのカードを返す
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-fun openCard(userZone:LinearLayout){
-    if(userZone.childCount != HANDNUM){
+fun openCard(userZone: LinearLayout) {
+    if (userZone.childCount != HANDNUM) {
         return
     }
     for (d in dealer) {
-        if(!d.hidFlg){
+        if (!d.hidFlg) {
             continue
         }
         d.card.linearLayout {
@@ -176,83 +162,83 @@ fun openCard(userZone:LinearLayout){
 
 //スコアに対しての画面書き込みを行う
 @SuppressLint("SetTextI18n")
-fun calcCardScore(user: MutableList<Hand>, write: TextView,playerFlg: Boolean): Int {
-    val cc = calcpt(user,false)
-    if(write.text.indexOf("Player") != -1){
+fun calcCardScore(user: MutableList<Hand>, write: TextView, playerFlg: Boolean): Int {
+    val cc = calcpt(user, false)
+    if (write.text.indexOf("Player") != -1) {
         write.text = "Player:$cc"
-        if(cc > BLACKJACK){
+        if (cc > BLACKJACK) {
             write.text = "Player:$cc <Bust>"
-        }else if(cc == BLACKJACK){
+        } else if (cc == BLACKJACK) {
             write.text = "Player:$cc <BJ>"
         }
-    }else{
+    } else {
         write.text = "Dealer:$cc"
-        if(cc > BLACKJACK){
+        if (cc > BLACKJACK) {
             write.text = "Dealer:$cc <Bust>"
-        }else if(cc == BLACKJACK){
+        } else if (cc == BLACKJACK) {
             write.text = "Dealer:$cc <BJ>"
         }
     }
-    if(playerFlg){
+    if (playerFlg) {
         dpVs[PLAYER] = cc
-    }else{
+    } else {
         dpVs[DEALER] = cc
     }
     return cc
 }
 
 //スコア計算
-fun calcpt(user: MutableList<Hand>,firstFlg:Boolean): Int{
+fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
     var cc = 0
     var aceCount01 = 0
     var aceCount11 = 0
 
     calcLi.clear()
     calcLi.addAll(user)
-    calcLi.sortBy { it.trump.num}
+    calcLi.sortBy { it.trump.num }
 
     //なんかいろんな判定とか計算する
-    for (card in calcLi){
+    for (card in calcLi) {
         //裏返しのカード初回以外計算しない
-        if(card.hidFlg && !firstFlg) continue
+        if (card.hidFlg && !firstFlg) continue
 
         //絵札は10で統一
-        if(card.trump.num > JQK){
-            cc+= JQK
+        if (card.trump.num > JQK) {
+            cc += JQK
             continue
         }
 
         //ACELOW ACEHIGH判定
-        if(card.trump.num == 1){
-            if(cc <= (BLACKJACK-ACEHIGH)){
-                cc+= ACEHIGH
+        if (card.trump.num == 1) {
+            if (cc <= (BLACKJACK - ACEHIGH)) {
+                cc += ACEHIGH
                 aceCount11++
                 continue
-            }else{
+            } else {
                 cc++
                 aceCount01++
                 continue
             }
             //+ACELOWするとBustかつ1度以上ACEHIGHを利用している
             // (ACE(11),ACE(1)) -> (ACE(1),ACE(1))
-            if(aceCount11>0 && cc> (BLACKJACK - ACEHIGH)){
-                cc-=(ACEHIGH - ACELOW)//ace(11)->ace(1)
+            if (aceCount11 > 0 && cc > (BLACKJACK - ACEHIGH)) {
+                cc -= (ACEHIGH - ACELOW)//ace(11)->ace(1)
                 cc++ //今回のace(1)
-                aceCount01+=2
+                aceCount01 += 2
                 aceCount11--
                 continue
             }
         }
         //ACEHIGHありかつ今回のカードでBustになる
-        if(cc + card.trump.num > BLACKJACK && aceCount11>0){
-            cc-= (ACEHIGH - ACELOW)
-            cc+=card.trump.num
+        if (cc + card.trump.num > BLACKJACK && aceCount11 > 0) {
+            cc -= (ACEHIGH - ACELOW)
+            cc += card.trump.num
             aceCount11--
             aceCount01++
             continue
         }
         //その他(ACELOW加算)
-        cc+=card.trump.num
+        cc += card.trump.num
     }
     return cc
 }
@@ -264,7 +250,7 @@ fun calcpt(user: MutableList<Hand>,firstFlg:Boolean): Int{
  * LOSE 2
  * PUSH 3
  */
-fun cmpScore(playerScr:Int,dealerScr:Int,rst:Wager) :Int{
+fun cmpScore(playerScr: Int, dealerScr: Int, rst: Wager): Int {
     val BustFlgP = playerScr > BLACKJACK
     val BustFlgD = dealerScr > BLACKJACK
     val BJFlgP = playerScr == BLACKJACK
@@ -275,7 +261,7 @@ fun cmpScore(playerScr:Int,dealerScr:Int,rst:Wager) :Int{
             return 2
         }
         BustFlgD -> {
-            if(BJFlgP){
+            if (BJFlgP) {
                 //BJ WIN
                 rst.resultChip(BJOS)
                 return 0
@@ -285,7 +271,7 @@ fun cmpScore(playerScr:Int,dealerScr:Int,rst:Wager) :Int{
             return 1
         }
         playerScr > dealerScr -> {
-            if(BJFlgP){
+            if (BJFlgP) {
                 //BJ WIN
                 rst.resultChip(BJOS)
                 return 0
@@ -294,7 +280,7 @@ fun cmpScore(playerScr:Int,dealerScr:Int,rst:Wager) :Int{
             rst.resultChip(WINOS)
             return 1
         }
-        playerScr < dealerScr ->{
+        playerScr < dealerScr -> {
             //LOSE
             rst.resultChip(LOSEOS)
             return 2
@@ -315,9 +301,9 @@ fun cmpScore(playerScr:Int,dealerScr:Int,rst:Wager) :Int{
  * @handZone 手札を表示するView
  * @selCardView 選択したカードのView
  */
-fun selCard(selCard: Hand, field: FrameLayout, handZone: LinearLayout, selCardView: View){
-    for ((i,s) in selCards.withIndex())
-        if(s == selCardView){
+fun selCard(selCard: Hand, field: FrameLayout, handZone: LinearLayout, selCardView: View) {
+    for ((i, s) in selCards.withIndex())
+        if (s == selCardView) {
             selCardView.setBackgroundColor(0)
             selCards.drop(i)
             return
@@ -332,14 +318,14 @@ fun selCard(selCard: Hand, field: FrameLayout, handZone: LinearLayout, selCardVi
  * ※未使用※
  * 裏面のカードをオープンする
  */
-fun openCard(selHand:Hand,handZone: LinearLayout){
+fun openCard(selHand: Hand, handZone: LinearLayout) {
     val tText = "${selHand.trump.suit}\n${selHand.trump.num}"
     val cView = selHand.card
 //    cView.setBackgroundColor(Color.parseColor(CARDF))
     println("test${cView.childCount}")
     cView.removeAllViews()
     println("test${cView.childCount}")
-    handZone.linearLayout{
+    handZone.linearLayout {
         textView {
             backgroundColor = Color.parseColor(CARDF)
             text = tText
