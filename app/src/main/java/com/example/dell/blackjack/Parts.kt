@@ -58,7 +58,7 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean
         user += Hand(userZone.linearLayout {
             textView {
                 backgroundColor = Color.parseColor(CARDF)
-                text = "${trumps.first().suit}\n${trumps.first().num}"
+                text = "${trump.suit}\n${trump.num}"
                 if (i > 1 && !playerFlg) {
                     //2枚目以降ディーラー
                     backgroundColor = Color.parseColor(CARDB)
@@ -89,9 +89,10 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean
 @SuppressLint("SetTextI18n")
 fun drawCard(user: MutableList<Hand>, userZone: LinearLayout, playerFlg: Boolean) {
     //山札が0枚の時はデッキの再生成
-    if (trumps.size == 0) {
-        deck.init()
-    }
+    // XXX trumpsの利用箇所整理、ここで特に山札のリセット理由がなさそうと考え、一旦コメントアウト
+    //    if (trumps.size == 0) {
+    //        deck.init()
+    //    }
 
     if (!playerFlg) {
         //ディーラーパターン(条件を満たすまでカードを引き続ける)

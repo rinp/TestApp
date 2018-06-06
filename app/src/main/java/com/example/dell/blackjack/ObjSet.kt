@@ -70,8 +70,6 @@ data class Deck(private val deckCount: Int = 2) {
 
 }
 
-val trumps = mutableListOf<Trump>() //デッキ
-
 val hand = mutableListOf<Hand>() //手札(プレイヤー)
 val dealer = mutableListOf<Hand>() //手札(ディーラー)
 val selCards = mutableListOf<View>() //(未使用) 選択したカード
