@@ -13,6 +13,9 @@ import android.widget.TextView
 import com.example.dell.blackjack.R.id.*
 import org.jetbrains.anko.*
 
+
+var deck = Deck()
+
 /*処理*/
 //キャプションのセット
 @SuppressLint("SetTextI18n")
@@ -45,21 +48,6 @@ fun remTrump(){
     if(trumps.firstOrNull() != null) trumps.remove(trumps.first())
 }
 
-//トランプデッキの生成
-fun makeDeck(count:Int) {
-    trumps.clear()
-    for(i in 1..count){
-        for(i in 1..SUITNUM){
-            trumps.add(Trump("dia", i))
-            trumps.add(Trump("heart", i))
-            trumps.add(Trump("spade", i))
-            trumps.add(Trump("club", i))
-        }
-    }
-    trumps.shuffle()
-}
-
-
 /**
  *初回の手札を引く
  * @userZone 手札を表示するView
@@ -72,7 +60,7 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>,playerFlg: Boolean)
     for(i in 1..HANDNUM){
         //山札が0枚の時はデッキの再生成
         if(trumps.size == 0 ){
-            makeDeck(DECKCONT)
+            deck.init();
         }
         if(trumps.firstOrNull() != null) {
             val trump = trumps.first()
@@ -116,7 +104,7 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>,playerFlg: Boolean)
 fun drawCard(user: MutableList<Hand>, userZone: LinearLayout, playerFlg: Boolean) {
     //山札が0枚の時はデッキの再生成
     if(trumps.size == 0 ){
-        makeDeck(DECKCONT)
+        deck.init();
     }
 
     if(!playerFlg){

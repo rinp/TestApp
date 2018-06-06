@@ -4,16 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_start.*
-import org.jetbrains.anko.button
-import org.jetbrains.anko.linearLayout
 
 class MainActivity : AppCompatActivity() {
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
@@ -115,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         }
         if(status == 0){
             setCaption(caption00)
-            makeDeck(DECKCONT)
+            deck.init();
         }
         //手札生成(プレイヤー、ディーラー)
         makeHand(handZone, hand, true)
