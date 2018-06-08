@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         hit.isEnabled = true
         stand.isEnabled = true
         //自身のチップデータの読みこみ
-        val chip = loadChip(this.applicationContext, PLAYERMONEY)
+        val chip = loadChip(this.applicationContext)
         ////仮置きtest(最低限のベットを行う)
         //player.setBet(BET1)
         //情報の画面表示
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun nextSet() {
         ownChip.text = "chip: ${player.ownChip}"
-        setChip(this.applicationContext, PLAYERMONEY, player.ownChip)
+        setChip(this.applicationContext, player.ownChip)
         nextGame.visibility = View.VISIBLE
         backTop1.visibility = View.VISIBLE
     }

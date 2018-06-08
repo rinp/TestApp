@@ -40,7 +40,7 @@ class StartMenu : AppCompatActivity() {
         addChipView.setOnClickListener {}
         backToMenu.setOnClickListener {
             //チップ初期化
-            setChip(this.applicationContext, PLAYERMONEY, FIRSTCHIP)
+            setChip(this.applicationContext, FIRSTCHIP)
             backToMenu.visibility = View.GONE
             timerRunningView.visibility = View.VISIBLE
             addChipView.visibility = View.GONE
@@ -76,22 +76,22 @@ class StartMenu : AppCompatActivity() {
         ////chipを1,000,000にする
         debagChipEq1M.setOnClickListener {
             //自身のチップデータの読みこみ
-            setChip(this.applicationContext, PLAYERMONEY, DEBAGMANYCHIP)
+            setChip(this.applicationContext, DEBAGMANYCHIP)
             startPrcs()
         }
         ////chipの格納されたプリファレンスを空にする
         debagChipClear.setOnClickListener {
-            val chip = loadChip(this.applicationContext, PLAYERMONEY)
+            val chip = loadChip(this.applicationContext)
             if (chip != -1) {
-                removePref(this.applicationContext, PLAYERMONEY)
+                removePref(this.applicationContext)
             }
             startPrcs()
         }
         ////チップを0にする
         debagChipEq0.setOnClickListener {
-            val chip = loadChip(this.applicationContext, PLAYERMONEY)
+            val chip = loadChip(this.applicationContext)
             if (chip != -1) {
-                setChip(this.applicationContext, PLAYERMONEY, 0)
+                setChip(this.applicationContext, 0)
             }
             startPrcs()
         }
@@ -130,12 +130,12 @@ class StartMenu : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun startPrcs() {
         //自身のチップデータの読みこみ
-        var chip = loadChip(this.applicationContext, PLAYERMONEY)
+        var chip = loadChip(this.applicationContext)
 
         //プリファレンスがないときは初期値を入れる
         if (chip == -1) {
-            setChip(this.applicationContext, PLAYERMONEY, FIRSTCHIP)
-            chip = loadChip(this.applicationContext, PLAYERMONEY)
+            setChip(this.applicationContext, FIRSTCHIP)
+            chip = loadChip(this.applicationContext)
         }
 
         //チップ所持数で掛けられるBETの処理
