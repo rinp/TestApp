@@ -53,7 +53,16 @@ class MainActivity : AppCompatActivity() {
         stand.setOnClickListener {
             stand.isEnabled = false
             hit.isEnabled = false
-            drawCardDealer(dealerZone)
+            dealer.openHand(dealerZone)
+            val playerScore = you.calcScore()
+            var dealerScore = dealer.calcScore()
+            while (dealerScore < DEALSTOPSCR) {
+                if (playerScore < dealerScore) {
+                    break
+                }
+                dealer.addCard(dealerZone)
+                dealerScore = dealer.calcScore()
+            }
             //結果
             val pCS = you.printScore(playerCS)
             val dCS = dealer.printScore(dealerCS)
@@ -61,6 +70,8 @@ class MainActivity : AppCompatActivity() {
 
             nextSet()
         }
+
+
 
         //次のゲームを始める
         nextGame.setOnClickListener {

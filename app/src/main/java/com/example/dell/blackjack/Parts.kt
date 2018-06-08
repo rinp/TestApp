@@ -80,26 +80,6 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean
 
 }
 
-/**
- * カードを引く
- * @userZone 手札を表示するView
- */
-@SuppressLint("SetTextI18n")
-fun drawCardDealer(userZone: LinearLayout) {
-    val user  = dealer
-    //ディーラーパターン(条件を満たすまでカードを引き続ける)
-    dealer.openHand(userZone)
-    val playerScore = you.calcScore()
-    var dealerScore = dealer.calcScore()
-    while (dealerScore < DEALSTOPSCR) {
-        if (playerScore < dealerScore) {
-            return
-        }
-        user.addCard(userZone)
-        dealerScore = dealer.calcScore()
-    }
-}
-
 //手札にカードを追加する
 @SuppressLint("SetTextI18n", "RtlHardcoded")
 fun addCard(user: MutableList<Hand>, userZone: LinearLayout) {
