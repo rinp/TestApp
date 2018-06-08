@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         val dealer = Dealer()
 
+        val you = Player()
+
         //初期処理
-        zoneReset(0, dealer)
+        zoneReset(0, dealer, you)
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
@@ -74,10 +76,9 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
         //次のゲームを始める
         nextGame.setOnClickListener {
-            zoneReset(1, dealer)
+            zoneReset(1, dealer, you)
             nextGame.visibility = View.GONE
             backTop1.visibility = View.GONE
         }
@@ -113,7 +114,7 @@ class MainActivity : AppCompatActivity() {
      * 場のリセット(初回:0・継続:1)
      */
     @SuppressLint("SetTextI18n")
-    private fun zoneReset(status: Int, dealer: Dealer) {
+    private fun zoneReset(status: Int, dealer: Dealer, you: Player) {
         //場のカード情報の削除
         handZone.removeAllViews()
         dealerZone.removeAllViews()
