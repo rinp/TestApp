@@ -92,7 +92,6 @@ fun drawCardDealer(userZone: LinearLayout) {
     val playerscore = calcpt(hand, false)
     var dealerScore = calcpt(dealer, false)
     while (dealerScore < DEALSTOPSCR) {
-        //無駄に引く必要がなかったら止める todo:ルール的にあってる？
         if (playerscore < dealerScore) {
             return
         }
@@ -101,7 +100,7 @@ fun drawCardDealer(userZone: LinearLayout) {
     }
 }
 
-//手札にデッキの一番上の情報を記載したカードを追加する
+//手札にカードを追加する
 @SuppressLint("SetTextI18n", "RtlHardcoded")
 fun addCard(user: MutableList<Hand>, userZone: LinearLayout) {
     val card = deck.dealCard()
