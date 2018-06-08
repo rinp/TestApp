@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
             //22以上<Bust>で敗北
             if (pCS > BLACKJACK) {
-                openCard(dealerZone)
+                dealer.openHand(dealerZone)
                 hit.isEnabled = false
                 stand.isEnabled = false
                 result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         }
         if (dealerFstScore == BLACKJACK) {
             //ディーラーBJだと強制勝負
-            openCard(dealerZone)
+            dealer.openHand(dealerZone)
             dealerCS.text = "Dealer:$BLACKJACK <BJ>"
             you.printScore(playerCS)
             //プレイヤーの操作は不可

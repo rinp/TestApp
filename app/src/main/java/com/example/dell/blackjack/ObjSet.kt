@@ -1,8 +1,11 @@
 package com.example.dell.blackjack
 
+import android.annotation.SuppressLint
 import android.widget.LinearLayout
-import android.content.Context
+import android.graphics.Color
+import android.view.Gravity
 import android.widget.TextView
+import org.jetbrains.anko.*
 
 /*定数*/
 ////カードルール
@@ -82,7 +85,7 @@ class Player {
 val dealer = Dealer()
 
 class Dealer {
-    var hand = mutableListOf<Hand>() //手札
+    private var hand = mutableListOf<Hand>() //手札
     fun addCard(userZone: LinearLayout) {
         addCard(hand, userZone)
     }
@@ -97,6 +100,31 @@ class Dealer {
 
     fun calcScore(): Int {
         return calcpt(hand, false)
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun openHand(userZone: LinearLayout) {
+        for (d in hand) {
+            if (!d.hidFlg) {
+                continue
+            }
+            d.card.linearLayout {
+                textView {
+                    text = "${d.trump.suit}\n${d.trump.num}"
+                    backgroundColor = Color.parseColor(CARDF)
+                }.lparams(width = userZone.width) {
+                    width = dip(CARDW)
+                    height = dip(CARDH)
+                    gravity = Gravity.START
+                    horizontalMargin = dip(5)
+                    verticalMargin = dip(5)
+                }
+            }
+            //カードをオープン状態にする(スコアに含める)
+            d.open(d.hidFlg)
+            //裏のカードとして使用していた空のテキストビューを削除するindex2: 配列:0~3 count:3なので裏は配列:1(count-2)
+            d.card.removeView(d.card.getChildAt(d.card.childCount - 2))
+        }
     }
 }
 

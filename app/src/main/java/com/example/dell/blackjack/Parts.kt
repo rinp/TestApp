@@ -88,7 +88,7 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean
 fun drawCardDealer(userZone: LinearLayout) {
     val user  = dealer
     //ディーラーパターン(条件を満たすまでカードを引き続ける)
-    openCard(userZone)
+    dealer.openHand(userZone)
     val playerScore = you.calcScore()
     var dealerScore = dealer.calcScore()
     while (dealerScore < DEALSTOPSCR) {
@@ -117,35 +117,6 @@ fun addCard(user: MutableList<Hand>, userZone: LinearLayout) {
             verticalMargin = dip(5)
         }
     }, card, false)
-}
-
-//裏返しのカードを返す
-@SuppressLint("SetTextI18n", "RtlHardcoded")
-fun openCard(userZone: LinearLayout) {
-    if (userZone.childCount != HANDNUM) {
-        return
-    }
-    for (d in dealer.hand) {
-        if (!d.hidFlg) {
-            continue
-        }
-        d.card.linearLayout {
-            textView {
-                text = "${d.trump.suit}\n${d.trump.num}"
-                backgroundColor = Color.parseColor(CARDF)
-            }.lparams(width = userZone.width) {
-                width = dip(CARDW)
-                height = dip(CARDH)
-                gravity = Gravity.LEFT
-                horizontalMargin = dip(5)
-                verticalMargin = dip(5)
-            }
-        }
-        //カードをオープン状態にする(スコアに含める)
-        d.open(d.hidFlg)
-        //裏のカードとして使用していた空のテキストビューを削除するindex2: 配列:0~3 count:3なので裏は配列:1(count-2)
-        d.card.removeView(d.card.getChildAt(d.card.childCount - 2))
-    }
 }
 
 //スコアに対しての画面書き込みを行う
