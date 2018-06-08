@@ -61,7 +61,7 @@ data class Deck(private val deckCount: Int = 2) {
 val you = Player()
 
 class Player {
-    var hand = mutableListOf<Hand>() //手札(プレイヤー)
+    private var hand = mutableListOf<Hand>() //手札(プレイヤー)
     fun addCard(userZone: LinearLayout) {
         addCard(hand, userZone)
     }
@@ -82,7 +82,7 @@ class Player {
 val dealer = Dealer()
 
 class Dealer {
-    private var hand = mutableListOf<Hand>() //手札
+    var hand = mutableListOf<Hand>() //手札
     fun addCard(userZone: LinearLayout) {
         addCard(hand, userZone)
     }
