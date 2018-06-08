@@ -27,7 +27,9 @@ class MainActivity : AppCompatActivity() {
 
         //カードを引く
         hit.setOnClickListener {
-            drawCard(hand, handZone, true)
+            //プレイヤーパターン(一度だけカードを引く)
+            addCard(hand, handZone)
+
             countCards(endsCards)
             val pCS = calcCardScore(hand, playerCS, true)
             val dCS = calcCardScore(dealer, dealerCS, false)
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         stand.setOnClickListener {
             stand.isEnabled = false
             hit.isEnabled = false
-            drawCard(dealer, dealerZone, false)
+            drawCardDealer(dealerZone)
             //結果
             val pCS = calcCardScore(hand, playerCS, true)
             val dCS = calcCardScore(dealer, dealerCS, false)

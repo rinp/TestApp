@@ -6,8 +6,6 @@ import android.annotation.SuppressLint
 
 import android.graphics.Color
 import android.view.Gravity
-import android.view.View
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.dell.blackjack.R.id.*
@@ -87,29 +85,19 @@ fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean
  * @userZone 手札を表示するView
  */
 @SuppressLint("SetTextI18n")
-fun drawCard(user: MutableList<Hand>, userZone: LinearLayout, playerFlg: Boolean) {
-    //山札が0枚の時はデッキの再生成
-    // XXX trumpsの利用箇所整理、ここで特に山札のリセット理由がなさそうと考え、一旦コメントアウト
-    //    if (trumps.size == 0) {
-    //        deck.init()
-    //    }
-
-    if (!playerFlg) {
-        //ディーラーパターン(条件を満たすまでカードを引き続ける)
-        openCard(userZone)
-        val playerscore = calcpt(hand, false)
-        var dealerScore = calcpt(dealer, false)
-        while (dealerScore < DEALSTOPSCR) {
-            //無駄に引く必要がなかったら止める todo:ルール的にあってる？
-            if (playerscore < dealerScore) {
-                return
-            }
-            addCard(user, userZone)
-            dealerScore = calcpt(dealer, false)
+fun drawCardDealer(userZone: LinearLayout) {
+    val user  = dealer
+    //ディーラーパターン(条件を満たすまでカードを引き続ける)
+    openCard(userZone)
+    val playerscore = calcpt(hand, false)
+    var dealerScore = calcpt(dealer, false)
+    while (dealerScore < DEALSTOPSCR) {
+        //無駄に引く必要がなかったら止める todo:ルール的にあってる？
+        if (playerscore < dealerScore) {
+            return
         }
-    } else {
-        //プレイヤーパターン(一度だけカードを引く)
         addCard(user, userZone)
+        dealerScore = calcpt(dealer, false)
     }
 }
 
@@ -289,54 +277,5 @@ fun cmpScore(playerScr: Int, dealerScr: Int, rst: Wager): Int {
         else ->
             //PUSH
             return 3
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-////以下未使用
-/**
- * ※未使用※
- * 手札からカードを選択する
- * @throwCard 手札クラス
- * @field 選択したカードを表示するView
- * @handZone 手札を表示するView
- * @selCardView 選択したカードのView
- */
-fun selCard(selCard: Hand, field: FrameLayout, handZone: LinearLayout, selCardView: View) {
-    for ((i, s) in selCards.withIndex())
-        if (s == selCardView) {
-            selCardView.setBackgroundColor(0)
-            selCards.drop(i)
-            return
-        }
-    //選択状態
-    selCardView.setBackgroundColor(Color.parseColor(CARDSEL))
-
-    selCards.add(selCardView)
-}
-
-/**
- * ※未使用※
- * 裏面のカードをオープンする
- */
-fun openCard(selHand: Hand, handZone: LinearLayout) {
-    val tText = "${selHand.trump.suit}\n${selHand.trump.num}"
-    val cView = selHand.card
-//    cView.setBackgroundColor(Color.parseColor(CARDF))
-    println("test${cView.childCount}")
-    cView.removeAllViews()
-    println("test${cView.childCount}")
-    handZone.linearLayout {
-        textView {
-            backgroundColor = Color.parseColor(CARDF)
-            text = tText
-            gravity = Gravity.LEFT
-        }.lparams(width = handZone.width) {
-            width = dip(CARDW)
-            height = dip(CARDH)
-            gravity = Gravity.LEFT
-            horizontalMargin = dip(5)
-            verticalMargin = dip(5)
-        }
     }
 }
