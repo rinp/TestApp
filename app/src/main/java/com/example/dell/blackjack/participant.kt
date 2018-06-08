@@ -10,6 +10,7 @@ import org.jetbrains.anko.*
 private const val ACE_HIGH: Int = 11 //ACEを高い値で数える
 private const val ACE_LOW: Int = 1 //ACEを低い値で数える
 private const val JQK: Int = 10 //絵札の値
+private const val HAND_NUM: Int = 2 //初回の手札の数
 
 class Player {
     private var hand = mutableListOf<Hand>() //手札(プレイヤー)
@@ -186,7 +187,7 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
 fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean, deck: Deck) {
     user.clear()
     var score = 0
-    for (i in 1..HANDNUM) {
+    for (i in 1..HAND_NUM) {
         val trump = deck.dealCard()
         score += trump.num
         user += Hand(userZone.linearLayout {

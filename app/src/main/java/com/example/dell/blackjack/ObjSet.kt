@@ -13,13 +13,6 @@ const val DEBAGMANYCHIP: Int = 1000000 //テスト用
 const val BET1: Int = 500 //ベット1
 const val BET2: Int = 1000 //ベット2
 const val BET3: Int = 5000 //ベット3
-const val LOSEOS: Double = 0.0 //敗北時配当
-const val WINOS: Double = 3.0 //勝利時配当
-const val BJOS: Double = 3.5 //BJ勝利時配当
-val DUELRESLT = listOf("BJWIN", "WIN", "LOSE", "PUSH") //画面書き込み用
-
-
-const val HANDNUM: Int = 2 //初回の手札の数
 
 data class Deck(private val deckCount: Int = 2) {
     private lateinit var cards: List<Trump>

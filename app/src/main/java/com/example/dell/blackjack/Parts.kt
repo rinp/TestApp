@@ -5,6 +5,10 @@ package com.example.dell.blackjack
 import android.annotation.SuppressLint
 import android.widget.TextView
 
+private const val LOSEOS: Double = 0.0 //敗北時配当
+private const val WINOS: Double = 3.0 //勝利時配当
+private const val BJOS: Double = 3.5 //BJ勝利時配当
+
 /*処理*/
 //キャプションのセット
 @SuppressLint("SetTextI18n")

@@ -13,6 +13,8 @@ import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private val duelResult = listOf("BJ WIN", "WIN", "LOSE", "PUSH") //画面書き込み用
+
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 dealer.openHand(dealerZone)
                 hit.isEnabled = false
                 stand.isEnabled = false
-                result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
+                result.text = duelResult[cmpScore(pCS, dCS, player)]
                 nextSet()
             }
         }
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             //結果
             val pCS = you.printScore(playerCS)
             val dCS = dealer.printScore(dealerCS)
-            result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
+            result.text = duelResult[cmpScore(pCS, dCS, player)]
 
             nextSet()
         }
