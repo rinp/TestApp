@@ -18,8 +18,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val dealer = Dealer()
+
         //初期処理
-        zoneReset(0)
+        zoneReset(0, dealer)
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
@@ -75,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
         //次のゲームを始める
         nextGame.setOnClickListener {
-            zoneReset(1)
+            zoneReset(1, dealer)
             nextGame.visibility = View.GONE
             backTop1.visibility = View.GONE
         }
@@ -111,7 +113,7 @@ class MainActivity : AppCompatActivity() {
      * 場のリセット(初回:0・継続:1)
      */
     @SuppressLint("SetTextI18n")
-    private fun zoneReset(status: Int) {
+    private fun zoneReset(status: Int, dealer: Dealer) {
         //場のカード情報の削除
         handZone.removeAllViews()
         dealerZone.removeAllViews()

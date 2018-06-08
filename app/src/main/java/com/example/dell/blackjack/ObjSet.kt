@@ -82,8 +82,6 @@ class Player {
     }
 }
 
-val dealer = Dealer()
-
 class Dealer {
     private var hand = mutableListOf<Hand>() //手札
     fun addCard(userZone: LinearLayout) {
