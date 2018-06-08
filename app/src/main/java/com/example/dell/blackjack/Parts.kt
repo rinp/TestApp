@@ -3,16 +3,7 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
-
-import android.graphics.Color
-import android.view.Gravity
-import android.widget.LinearLayout
 import android.widget.TextView
-import com.example.dell.blackjack.R.id.*
-import org.jetbrains.anko.*
-
-
-var deck = Deck()
 
 /*処理*/
 //キャプションのセット
@@ -31,53 +22,6 @@ fun setCaption(text: TextView) {
     | PUSH:×1
     | LOSE:×0
 """.trimMargin()
-}
-
-//トランプセットの残り枚数を更新する
-@SuppressLint("SetTextI18n")
-fun countCards(view: TextView) {
-    if (view.id == endsCards) {
-        view.text = deck.remainingCardCount()
-    }
-}
-
-/**
- *初回の手札を引く
- * @userZone 手札を表示するView
- * @user 手札を格納する変数
- */
-@SuppressLint("SetTextI18n", "RtlHardcoded")
-fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean) {
-    user.clear()
-    var score = 0
-    for (i in 1..HANDNUM) {
-        val trump = deck.dealCard()
-        score += trump.num
-        user += Hand(userZone.linearLayout {
-            textView {
-                backgroundColor = Color.parseColor(CARDF)
-                text = "${trump.suit}\n${trump.num}"
-                if (i > 1 && !playerFlg) {
-                    //2枚目以降ディーラー
-                    backgroundColor = Color.parseColor(CARDB)
-                    text = ""
-                }
-                gravity = Gravity.LEFT
-            }.lparams(width = userZone.width) {
-                width = dip(CARDW)
-                height = dip(CARDH)
-                gravity = Gravity.LEFT
-                horizontalMargin = dip(5)
-                verticalMargin = dip(5)
-            }
-        }, trump, i > 1 && !playerFlg)
-    }
-    if (playerFlg) {
-        dpVs[PLAYER] = score
-    } else {
-        dpVs[DEALER] = score
-    }
-
 }
 
 /**

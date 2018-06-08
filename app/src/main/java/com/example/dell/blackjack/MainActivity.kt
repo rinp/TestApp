@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -19,11 +20,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val dealer = Dealer()
-
         val you = Player()
+        val deck = Deck()
 
         //初期処理
-        zoneReset(0, dealer, you)
+        zoneReset(0, dealer, you, deck)
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
@@ -31,9 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         //カードを引く
         hit.setOnClickListener {
-            you.addCard(handZone)
+            you.addCard(handZone, deck)
 
-            countCards(endsCards)
+            countCards(endsCards, deck)
             val pCS = you.printScore(playerCS)
             val dCS = dealer.printScore(dealerCS)
 
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 if (playerScore < dealerScore) {
                     break
                 }
-                dealer.addCard(dealerZone)
+                dealer.addCard(dealerZone, deck)
                 dealerScore = dealer.calcScore()
             }
             //結果
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         //次のゲームを始める
         nextGame.setOnClickListener {
-            zoneReset(1, dealer, you)
+            zoneReset(1, dealer, you, deck)
             nextGame.visibility = View.GONE
             backTop1.visibility = View.GONE
         }
@@ -114,7 +115,7 @@ class MainActivity : AppCompatActivity() {
      * 場のリセット(初回:0・継続:1)
      */
     @SuppressLint("SetTextI18n")
-    private fun zoneReset(status: Int, dealer: Dealer, you: Player) {
+    private fun zoneReset(status: Int, dealer: Dealer, you: Player, deck: Deck) {
         //場のカード情報の削除
         handZone.removeAllViews()
         dealerZone.removeAllViews()
@@ -127,16 +128,16 @@ class MainActivity : AppCompatActivity() {
         }
         if (status == 0) {
             setCaption(caption00)
-            deck.init();
+            deck.init()
         }
         //手札生成(プレイヤー、ディーラー)
-        you.makeHand(handZone)
-        dealer.makeHand(dealerZone)
+        you.makeHand(handZone, deck)
+        dealer.makeHand(dealerZone, deck)
         //合計値の算出
         you.printScore(playerCS)
         dealer.printScore(dealerCS)
         //山札の残り
-        countCards(endsCards)
+        countCards(endsCards, deck)
         //ボタンの活性化
         hit.isEnabled = true
         stand.isEnabled = true
@@ -179,6 +180,16 @@ class MainActivity : AppCompatActivity() {
         backTop1.visibility = View.VISIBLE
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
+
+    //トランプセットの残り枚数を更新する
+    @SuppressLint("SetTextI18n")
+    private fun countCards(view: TextView, deck: Deck) {
+        if (view.id == R.id.endsCards) {
+            view.text = deck.remainingCardCount()
+        }
+    }
+
+
     /**
      *
      *インターナル広告

@@ -7,18 +7,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import org.jetbrains.anko.*
 
-private const val ACEHIGH: Int = 11 //ACEを高い値で数える
-private const val ACELOW: Int = 1 //ACEを低い値で数える
+private const val ACE_HIGH: Int = 11 //ACEを高い値で数える
+private const val ACE_LOW: Int = 1 //ACEを低い値で数える
 private const val JQK: Int = 10 //絵札の値
 
 class Player {
     private var hand = mutableListOf<Hand>() //手札(プレイヤー)
-    fun addCard(userZone: LinearLayout) {
-        addCard(hand, userZone)
+    fun addCard(userZone: LinearLayout, deck: Deck) {
+        addCard(hand, userZone, deck)
     }
 
-    fun makeHand(handZone: LinearLayout) {
-        makeHand(handZone, hand, true)
+    fun makeHand(handZone: LinearLayout, deck: Deck) {
+        makeHand(handZone, hand, true, deck)
     }
 
     fun printScore(playerCS: TextView): Int {
@@ -32,12 +32,12 @@ class Player {
 
 class Dealer {
     private var hand = mutableListOf<Hand>() //手札
-    fun addCard(userZone: LinearLayout) {
-        addCard(hand, userZone)
+    fun addCard(userZone: LinearLayout, deck: Deck) {
+        addCard(hand, userZone, deck)
     }
 
-    fun makeHand(handZone: LinearLayout) {
-        makeHand(handZone, hand, false)
+    fun makeHand(handZone: LinearLayout, deck: Deck) {
+        makeHand(handZone, hand, false, deck)
     }
 
     fun printScore(playerCS: TextView): Int {
@@ -76,7 +76,7 @@ class Dealer {
 
 //手札にカードを追加する
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-private fun addCard(user: MutableList<Hand>, userZone: LinearLayout) {
+private fun addCard(user: MutableList<Hand>, userZone: LinearLayout, deck: Deck) {
     val card = deck.dealCard()
     user += Hand(userZone.linearLayout {
         textView {
@@ -142,10 +142,10 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
             continue
         }
 
-        //ACELOW ACEHIGH判定
+        //ACE_LOW ACEHIGH判定
         if (card.trump.num == 1) {
-            if (cc <= (BLACKJACK - ACEHIGH)) {
-                cc += ACEHIGH
+            if (cc <= (BLACKJACK - ACE_HIGH)) {
+                cc += ACE_HIGH
                 aceCount11++
                 continue
             } else {
@@ -155,8 +155,8 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
             }
             //+ACELOWするとBustかつ1度以上ACEHIGHを利用している
             // (ACE(11),ACE(1)) -> (ACE(1),ACE(1))
-            if (aceCount11 > 0 && cc > (BLACKJACK - ACEHIGH)) {
-                cc -= (ACEHIGH - ACELOW)//ace(11)->ace(1)
+            if (aceCount11 > 0 && cc > (BLACKJACK - ACE_HIGH)) {
+                cc -= (ACE_HIGH - ACE_LOW)//ace(11)->ace(1)
                 cc++ //今回のace(1)
                 aceCount01 += 2
                 aceCount11--
@@ -165,7 +165,7 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
         }
         //ACEHIGHありかつ今回のカードでBustになる
         if (cc + card.trump.num > BLACKJACK && aceCount11 > 0) {
-            cc -= (ACEHIGH - ACELOW)
+            cc -= (ACE_HIGH - ACE_LOW)
             cc += card.trump.num
             aceCount11--
             aceCount01++
@@ -175,4 +175,43 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
         cc += card.trump.num
     }
     return cc
+}
+
+/**
+ *初回の手札を引く
+ * @userZone 手札を表示するView
+ * @user 手札を格納する変数
+ */
+@SuppressLint("SetTextI18n", "RtlHardcoded")
+fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean, deck: Deck) {
+    user.clear()
+    var score = 0
+    for (i in 1..HANDNUM) {
+        val trump = deck.dealCard()
+        score += trump.num
+        user += Hand(userZone.linearLayout {
+            textView {
+                backgroundColor = Color.parseColor(CARDF)
+                text = "${trump.suit}\n${trump.num}"
+                if (i > 1 && !playerFlg) {
+                    //2枚目以降ディーラー
+                    backgroundColor = Color.parseColor(CARDB)
+                    text = ""
+                }
+                gravity = Gravity.LEFT
+            }.lparams(width = userZone.width) {
+                width = dip(CARDW)
+                height = dip(CARDH)
+                gravity = Gravity.LEFT
+                horizontalMargin = dip(5)
+                verticalMargin = dip(5)
+            }
+        }, trump, i > 1 && !playerFlg)
+    }
+    if (playerFlg) {
+        dpVs[PLAYER] = score
+    } else {
+        dpVs[DEALER] = score
+    }
+
 }
