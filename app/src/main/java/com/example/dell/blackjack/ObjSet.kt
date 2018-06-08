@@ -64,7 +64,7 @@ data class Deck(private val deckCount: Int = 2) {
 val you = Player()
 
 class Player {
-    private var hand = mutableListOf<Hand>() //手札(プレイヤー)
+    var hand = mutableListOf<Hand>() //手札(プレイヤー)
     fun addCard(userZone: LinearLayout) {
         addCard(hand, userZone)
     }
@@ -82,8 +82,26 @@ class Player {
     }
 }
 
-val dealer = mutableListOf<Hand>() //手札(ディーラー)
+val dealer = Dealer()
 
+class Dealer {
+    private var hand = mutableListOf<Hand>() //手札
+    fun addCard(userZone: LinearLayout) {
+        addCard(hand, userZone)
+    }
+
+    fun makeHand(handZone: LinearLayout) {
+        makeHand(handZone, hand, false)
+    }
+
+    fun printScore(playerCS: TextView): Int {
+        return calcCardScore(hand, playerCS, false)
+    }
+
+    fun calcScore(): Int {
+        return calcpt(hand, false)
+    }
+}
 
 val calcLi = mutableListOf<Hand>() //スコア計算用
 val dpVs = mutableMapOf(PLAYER to 0, DEALER to 0) //1ゲームの結果

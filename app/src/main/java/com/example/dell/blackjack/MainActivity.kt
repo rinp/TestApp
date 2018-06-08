@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
             countCards(endsCards)
             val pCS = you.printScore(playerCS)
-            val dCS = calcCardScore(dealer, dealerCS, false)
+            val dCS = dealer.printScore(dealerCS)
 
             //ブラックジャックの時はhitを止める(standを押させる)
             if (pCS == BLACKJACK) {
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             drawCardDealer(dealerZone)
             //結果
             val pCS = you.printScore(playerCS)
-            val dCS = calcCardScore(dealer, dealerCS, false)
+            val dCS = dealer.printScore(dealerCS)
             result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
 
             nextSet()
@@ -117,10 +117,10 @@ class MainActivity : AppCompatActivity() {
         }
         //手札生成(プレイヤー、ディーラー)
         you.makeHand(handZone)
-        makeHand(dealerZone, dealer, false)
+        dealer.makeHand(dealerZone)
         //合計値の算出
         you.printScore(playerCS)
-        calcCardScore(dealer, dealerCS, false)
+        dealer.printScore(dealerCS)
         //山札の残り
         countCards(endsCards)
         //ボタンの活性化
@@ -135,7 +135,8 @@ class MainActivity : AppCompatActivity() {
         bet.text = "bet: ${player.betChip}"
         //初回カードの判定
         val playerFstScore = you.calcScore()
-        val dealerFstScore = calcpt(dealer, true)
+        val dealerFstScore = dealer.calcScore()
+
         if (playerFstScore == BLACKJACK) {
             //プレイヤー初回BJなら即勝負を掛けれるようにしとく(なくても良いやつ？)
             hit.isEnabled = false

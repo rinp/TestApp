@@ -90,13 +90,13 @@ fun drawCardDealer(userZone: LinearLayout) {
     //ディーラーパターン(条件を満たすまでカードを引き続ける)
     openCard(userZone)
     val playerScore = you.calcScore()
-    var dealerScore = calcpt(dealer, false)
+    var dealerScore = dealer.calcScore()
     while (dealerScore < DEALSTOPSCR) {
         if (playerScore < dealerScore) {
             return
         }
-        addCard(user, userZone)
-        dealerScore = calcpt(dealer, false)
+        user.addCard(userZone)
+        dealerScore = dealer.calcScore()
     }
 }
 
@@ -125,7 +125,7 @@ fun openCard(userZone: LinearLayout) {
     if (userZone.childCount != HANDNUM) {
         return
     }
-    for (d in dealer) {
+    for (d in dealer.hand) {
         if (!d.hidFlg) {
             continue
         }
