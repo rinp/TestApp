@@ -1,18 +1,10 @@
 package com.example.dell.blackjack
 
-import android.annotation.SuppressLint
 import android.widget.LinearLayout
-import android.graphics.Color
-import android.view.Gravity
-import android.widget.TextView
-import org.jetbrains.anko.*
 
 /*定数*/
 ////カードルール
 const val DEALSTOPSCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
-const val ACEHIGH: Int = 11 //ACEを高い値で数える
-const val ACELOW: Int = 1 //ACEを低い値で数える
-const val JQK: Int = 10 //絵札の値
 const val BLACKJACK: Int = 21 //BLACKJACKの値
 ////所持金関係
 const val FIRSTCHIP: Int = 3000 //初回起動時チップ
@@ -59,69 +51,6 @@ data class Deck(private val deckCount: Int = 2) {
 
     fun remainingCardCount() = "count:${cards.count() - i}"
 
-}
-
-class Player {
-    private var hand = mutableListOf<Hand>() //手札(プレイヤー)
-    fun addCard(userZone: LinearLayout) {
-        addCard(hand, userZone)
-    }
-
-    fun makeHand(handZone: LinearLayout) {
-        makeHand(handZone, hand, true)
-    }
-
-    fun printScore(playerCS: TextView): Int {
-        return calcCardScore(hand, playerCS, true)
-    }
-
-    fun calcScore(): Int {
-        return calcpt(hand, true)
-    }
-}
-
-class Dealer {
-    private var hand = mutableListOf<Hand>() //手札
-    fun addCard(userZone: LinearLayout) {
-        addCard(hand, userZone)
-    }
-
-    fun makeHand(handZone: LinearLayout) {
-        makeHand(handZone, hand, false)
-    }
-
-    fun printScore(playerCS: TextView): Int {
-        return calcCardScore(hand, playerCS, false)
-    }
-
-    fun calcScore(): Int {
-        return calcpt(hand, false)
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun openHand(userZone: LinearLayout) {
-        for (d in hand) {
-            if (!d.hidFlg) {
-                continue
-            }
-            d.card.linearLayout {
-                textView {
-                    text = "${d.trump.suit}\n${d.trump.num}"
-                    backgroundColor = Color.parseColor(CARDF)
-                }.lparams(width = userZone.width) {
-                    width = dip(CARDW)
-                    height = dip(CARDH)
-                    gravity = Gravity.START
-                    horizontalMargin = dip(5)
-                    verticalMargin = dip(5)
-                }
-            }
-            //カードをオープン状態にする(スコアに含める)
-            d.open(d.hidFlg)
-            //裏のカードとして使用していた空のテキストビューを削除するindex2: 配列:0~3 count:3なので裏は配列:1(count-2)
-            d.card.removeView(d.card.getChildAt(d.card.childCount - 2))
-        }
-    }
 }
 
 val calcLi = mutableListOf<Hand>() //スコア計算用
