@@ -27,11 +27,10 @@ class MainActivity : AppCompatActivity() {
 
         //カードを引く
         hit.setOnClickListener {
-            //プレイヤーパターン(一度だけカードを引く)
-            addCard(hand, handZone)
+            you.addCard(handZone)
 
             countCards(endsCards)
-            val pCS = calcCardScore(hand, playerCS, true)
+            val pCS = you.printScore(playerCS)
             val dCS = calcCardScore(dealer, dealerCS, false)
 
             //ブラックジャックの時はhitを止める(standを押させる)
@@ -56,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             hit.isEnabled = false
             drawCardDealer(dealerZone)
             //結果
-            val pCS = calcCardScore(hand, playerCS, true)
+            val pCS = you.printScore(playerCS)
             val dCS = calcCardScore(dealer, dealerCS, false)
             result.text = DUELRESLT[cmpScore(pCS, dCS, player)]
 
@@ -117,10 +116,10 @@ class MainActivity : AppCompatActivity() {
             deck.init();
         }
         //手札生成(プレイヤー、ディーラー)
-        makeHand(handZone, hand, true)
+        you.makeHand(handZone)
         makeHand(dealerZone, dealer, false)
         //合計値の算出
-        calcCardScore(hand, playerCS, true)
+        you.printScore(playerCS)
         calcCardScore(dealer, dealerCS, false)
         //山札の残り
         countCards(endsCards)
@@ -135,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         ownChip.text = "chip: $chip"
         bet.text = "bet: ${player.betChip}"
         //初回カードの判定
-        val playerFstScore = calcpt(hand, false)
+        val playerFstScore = you.calcScore()
         val dealerFstScore = calcpt(dealer, true)
         if (playerFstScore == BLACKJACK) {
             //プレイヤー初回BJなら即勝負を掛けれるようにしとく(なくても良いやつ？)
@@ -146,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             //ディーラーBJだと強制勝負
             openCard(dealerZone)
             dealerCS.text = "Dealer:$BLACKJACK <BJ>"
-            calcCardScore(hand, playerCS, true)
+            you.printScore(playerCS)
             //プレイヤーの操作は不可
             hit.isEnabled = false
             hit.text = "BJ"

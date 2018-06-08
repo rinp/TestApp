@@ -89,10 +89,10 @@ fun drawCardDealer(userZone: LinearLayout) {
     val user  = dealer
     //ディーラーパターン(条件を満たすまでカードを引き続ける)
     openCard(userZone)
-    val playerscore = calcpt(hand, false)
+    val playerScore = you.calcScore()
     var dealerScore = calcpt(dealer, false)
     while (dealerScore < DEALSTOPSCR) {
-        if (playerscore < dealerScore) {
+        if (playerScore < dealerScore) {
             return
         }
         addCard(user, userZone)

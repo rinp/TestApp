@@ -1,8 +1,8 @@
 package com.example.dell.blackjack
 
-import android.view.View
 import android.widget.LinearLayout
 import android.content.Context
+import android.widget.TextView
 
 /*定数*/
 ////カードルール
@@ -61,9 +61,30 @@ data class Deck(private val deckCount: Int = 2) {
 
 }
 
-val hand = mutableListOf<Hand>() //手札(プレイヤー)
+val you = Player()
+
+class Player {
+    private var hand = mutableListOf<Hand>() //手札(プレイヤー)
+    fun addCard(userZone: LinearLayout) {
+        addCard(hand, userZone)
+    }
+
+    fun makeHand(handZone: LinearLayout) {
+        makeHand(handZone, hand, true)
+    }
+
+    fun printScore(playerCS: TextView): Int {
+        return calcCardScore(hand, playerCS, true)
+    }
+
+    fun calcScore(): Int {
+        return calcpt(hand, true)
+    }
+}
+
 val dealer = mutableListOf<Hand>() //手札(ディーラー)
-val selCards = mutableListOf<View>() //(未使用) 選択したカード
+
+
 val calcLi = mutableListOf<Hand>() //スコア計算用
 val dpVs = mutableMapOf(PLAYER to 0, DEALER to 0) //1ゲームの結果
 val player = Wager(0, 0)//ステータス
