@@ -7,6 +7,10 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 
+// 最終的にはMainActivityに戻ることになる。
+// BlackJackの一定量のデータ変化に連動する形で各々の値が変わる形にする。
+// RxAndroidの利用？
+
 data class GameLayout(
         val hit: Button,
         val playerCS: TextView,
