@@ -2,7 +2,6 @@ package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
 
 class BlackJack(private val gl: GameLayout) {
     /** 画面書き込み用 */
@@ -14,10 +13,10 @@ class BlackJack(private val gl: GameLayout) {
 
     fun hit() {
         you.addCard(gl.handZone, deck)
-
-        gl.countCards(gl.endsCards, deck)
         val pCS = you.printScore(gl.playerCS)
         val dCS = dealer.printScore(gl.dealerCS)
+
+        gl.countCards(gl.endsCards, deck)
 
         //ブラックジャックの時はhitを止める(standを押させる)
         if (pCS == BLACKJACK) {

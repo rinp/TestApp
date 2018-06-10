@@ -154,15 +154,6 @@ private fun calcpt(user: MutableList<Hand>, firstFlg: Boolean): Int {
                 aceCount01++
                 continue
             }
-            //+ACELOWするとBustかつ1度以上ACEHIGHを利用している
-            // (ACE(11),ACE(1)) -> (ACE(1),ACE(1))
-            if (aceCount11 > 0 && cc > (BLACKJACK - ACE_HIGH)) {
-                cc -= (ACE_HIGH - ACE_LOW)//ace(11)->ace(1)
-                cc++ //今回のace(1)
-                aceCount01 += 2
-                aceCount11--
-                continue
-            }
         }
         //ACEHIGHありかつ今回のカードでBustになる
         if (cc + card.trump.num > BLACKJACK && aceCount11 > 0) {
