@@ -9,25 +9,6 @@ private const val LOSEOS: Double = 0.0 //敗北時配当
 private const val WINOS: Double = 3.0 //勝利時配当
 private const val BJOS: Double = 3.5 //BJ勝利時配当
 
-/*処理*/
-//キャプションのセット
-@SuppressLint("SetTextI18n")
-fun setCaption(text: TextView) {
-    text.text =
-            """
-    |【RANK】
-    | Ace :1or11
-    | Jack,Queen,King:10
-    | else:ownNumber
-    |
-    |【Rate】
-    | Win(BJ):×2.5
-    | Win:×2
-    | PUSH:×1
-    | LOSE:×0
-""".trimMargin()
-}
-
 /**
  * 勝負判定
  * BJWIN 0

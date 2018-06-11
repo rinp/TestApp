@@ -47,5 +47,24 @@ data class GameLayout(
         }
     }
 
+    /*処理*/
+//キャプションのセット
+    @SuppressLint("SetTextI18n")
+    fun setCaption() {
+        caption00.text =
+                """
+    |【RANK】
+    | Ace :1or11
+    | Jack,Queen,King:10
+    | else:ownNumber
+    |
+    |【Rate】
+    | Win(BJ):×2.5
+    | Win:×2
+    | PUSH:×1
+    | LOSE:×0
+""".trimMargin()
+    }
+
 
 }

@@ -74,7 +74,7 @@ class BlackJack(private val gl: GameLayout) {
             gl.socView.visibility = View.VISIBLE
         }
         if (status == 0) {
-            setCaption(gl.caption00)
+            gl.setCaption()
             deck.init()
         }
         //手札生成(プレイヤー、ディーラー)
