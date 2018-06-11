@@ -2,12 +2,17 @@
 
 package com.example.dell.blackjack
 
-import android.annotation.SuppressLint
-import android.widget.TextView
-
 private const val LOSEOS: Double = 0.0 //敗北時配当
 private const val WINOS: Double = 3.0 //勝利時配当
 private const val BJOS: Double = 3.5 //BJ勝利時配当
+
+enum class Judge(val output: String) {
+    BJ_WIN("BJ WIN"),
+    WIN("BJ WIN"),
+    LOSE("BJ WIN"),
+    PUSH("BJ WIN")
+}
+
 
 /**
  * 勝負判定
@@ -16,43 +21,43 @@ private const val BJOS: Double = 3.5 //BJ勝利時配当
  * LOSE 2
  * PUSH 3
  */
-fun cmpScore(playerScr: Int, dealerScr: Int, rst: Wager): Int {
-    val BustFlgP = playerScr > BLACKJACK
-    val BustFlgD = dealerScr > BLACKJACK
-    val BJFlgP = playerScr == BLACKJACK
+fun cmpScore(playerScr: Int, dealerScr: Int, rst: Wager): Judge {
+    val bustFlgP = playerScr > BLACKJACK
+    val bustFlgD = dealerScr > BLACKJACK
+    val bjFlgP = playerScr == BLACKJACK
     when {
-        BustFlgP -> {
+        bustFlgP -> {
             //LOSE
             rst.resultChip(LOSEOS)
-            return 2
+            return Judge.LOSE
         }
-        BustFlgD -> {
-            if (BJFlgP) {
+        bustFlgD -> {
+            if (bjFlgP) {
                 //BJ WIN
                 rst.resultChip(BJOS)
-                return 0
+                return Judge.BJ_WIN
             }
             //WIN
             rst.resultChip(WINOS)
-            return 1
+            return Judge.WIN
         }
         playerScr > dealerScr -> {
-            if (BJFlgP) {
+            if (bjFlgP) {
                 //BJ WIN
                 rst.resultChip(BJOS)
-                return 0
+                return Judge.BJ_WIN
             }
             //WIN
             rst.resultChip(WINOS)
-            return 1
+            return Judge.WIN
         }
         playerScr < dealerScr -> {
             //LOSE
             rst.resultChip(LOSEOS)
-            return 2
+            return Judge.LOSE
         }
         else ->
             //PUSH
-            return 3
+            return Judge.PUSH
     }
 }

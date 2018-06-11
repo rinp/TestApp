@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.view.View
 
 class BlackJack(private val gl: GameLayout) {
-    /** 画面書き込み用 */
-    private val duelResult = listOf("BJ WIN", "WIN", "LOSE", "PUSH")
 
     val dealer = Dealer()
     val you = Player()
@@ -29,7 +27,7 @@ class BlackJack(private val gl: GameLayout) {
             dealer.openHand(gl.dealerZone)
             gl.hit.isEnabled = false
             gl.stand.isEnabled = false
-            gl.result.text = duelResult[cmpScore(pCS, dCS, player)]
+            gl.result.text = cmpScore(pCS, dCS, player).output
             gl.nextSet()
         }
     }
@@ -50,7 +48,7 @@ class BlackJack(private val gl: GameLayout) {
         //結果
         val pCS = you.printScore(gl.playerCS)
         val dCS = dealer.printScore(gl.dealerCS)
-        gl.result.text = duelResult[cmpScore(pCS, dCS, player)]
+        gl.result.text = cmpScore(pCS, dCS, player).output
 
         gl.nextSet()
     }
