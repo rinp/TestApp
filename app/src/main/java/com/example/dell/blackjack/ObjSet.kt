@@ -3,8 +3,6 @@ package com.example.dell.blackjack
 import android.widget.LinearLayout
 
 /*定数*/
-////カードルール
-const val DEALSTOPSCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
 const val BLACKJACK: Int = 21 //BLACKJACKの値
 ////所持金関係
 const val FIRSTCHIP: Int = 3000 //初回起動時チップ
