@@ -20,13 +20,23 @@ data class Deck(private val deckCount: Int = 2) {
     //トランプデッキの生成
     fun init() {
         this.cards = (1..deckCount).flatMap {
-            (1..13).flatMap { num ->
-                suits.map { suit ->
-                    Trump(suit = suit, num = num)
+            suits.flatMap { suit ->
+                (1..13).map { num ->
+                    when (num) {
+                        1 -> Trump(suit = suit, num = num)
+                        in (11..13) -> Trump(suit = suit, num = num)
+                        else -> Trump(suit = suit, num = num)
+                    }
                 }
             }
-        }.shuffled()
+        }
+        reset()
+    }
+
+    private fun reset() {
+        cards.shuffled()
         i = 0
+
     }
 
     private fun isEmpty(): Boolean {
@@ -35,7 +45,7 @@ data class Deck(private val deckCount: Int = 2) {
 
     fun dealCard(): Trump {
         if (isEmpty()) {
-            init()
+            reset()
         }
         return cards[i++]
     }
@@ -61,12 +71,23 @@ open class Trump(val suit: String, val num: Int)
  * カード
  * @card カードを表示するView
  * @Trump カードの情報
- * @hidFlg 裏表
+ * @isHide 裏表
  */
 //class Hand(val card: View, val trump: Trump)
-class Hand(val card: LinearLayout, val trump: Trump, var hidFlg: Boolean) {
-    fun open(hidFlg: Boolean) {
-        this.hidFlg = !hidFlg
+class Hand(val card: LinearLayout, val trump: Trump, var isHide: Boolean) {
+    fun open() {
+        this.isHide = false
+    }
+
+    fun point(): List<Int> {
+        if (isHide) {
+            return listOf(0)
+        }
+        return when (trump.num) {
+            1 -> listOf(1, 11)
+            in 11..13 -> listOf(10)
+            else -> listOf(trump.num)
+        }
     }
 }
 
