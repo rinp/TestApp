@@ -17,7 +17,8 @@ class BlackJack(private val gl: GameLayout) {
     val deck = Deck()
 
     fun hit() {
-        you.addCard(gl.handZone, deck)
+        val card = deck.dealCard()
+        you.addCard(gl.handZone, card)
         val pCS = you.printScore(gl.playerCS)
         // TODO プレイヤーがカードを引く場面でディーラーのスコアの再計算は必要なのか？
         // val dCS = dealer.printScore(gl.dealerCS)
@@ -59,11 +60,11 @@ class BlackJack(private val gl: GameLayout) {
         gl.backTop1.visibility = View.GONE
     }
 
-    fun dealerTurn() {
+    private fun dealerTurn() {
         dealer.openHand(gl.dealerZone)
         var dealerScore = dealer.calcScore()
         while (dealerScore < DEALER_STOP_SCR) {
-            dealer.addCard(gl.dealerZone, deck)
+            dealer.addCard(gl.dealerZone, deck.dealCard())
             dealerScore = dealer.calcScore()
         }
     }
@@ -143,10 +144,9 @@ class BlackJack(private val gl: GameLayout) {
         val bustFlgD = dealerScr > BLACKJACK
         val bjFlgP = playerScr == BLACKJACK
         val result = when {
-            bustFlgP -> {
-                Judge.LOSE
-            }
+            bustFlgP -> Judge.LOSE
             bustFlgD -> {
+                // TODO あってる？
                 if (bjFlgP) {
                     Judge.BJ_WIN
                 }
