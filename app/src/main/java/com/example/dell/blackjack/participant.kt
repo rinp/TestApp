@@ -7,14 +7,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import org.jetbrains.anko.*
 
-private const val ACE_HIGH: Int = 11 //ACEを高い値で数える
-private const val ACE_LOW: Int = 1 //ACEを低い値で数える
-private const val JQK: Int = 10 //絵札の値
 private const val HAND_NUM: Int = 2 //初回の手札の数
 
 class Player {
     private var hand = mutableListOf<Hand>() //手札(プレイヤー)
-    private var score: Int = 0
+    var score: Int = 0
+        private set
 
     fun addCard(userZone: LinearLayout, trump: Trump) {
         addCard(hand, userZone, trump)
@@ -33,7 +31,8 @@ class Player {
 
 class Dealer {
     private var hand = mutableListOf<Hand>() //手札
-    private var score: Int = 0
+    var score: Int = 0
+        private set
 
     fun addCard(userZone: LinearLayout, trump: Trump) {
         addCard(hand, userZone, trump)

@@ -104,7 +104,7 @@ class BlackJack(private val gl: GameLayout) {
         gl.ownChip.text = "chip: $chip"
         gl.bet.text = "bet: ${player.betChip}"
         //初回カードの判定
-        val playerFstScore = you.calcScore()
+        val playerFstScore = you.score
         val dealerFstScore = dealer.calcScore()
 
         if (playerFstScore == BLACKJACK) {
