@@ -54,7 +54,6 @@ data class Deck(private val deckCount: Int = 2) {
 
 }
 
-val calcLi = mutableListOf<Hand>() //スコア計算用
 val dpVs = mutableMapOf(PLAYER to 0, DEALER to 0) //1ゲームの結果
 val player = Wager(0, 0)//ステータス
 

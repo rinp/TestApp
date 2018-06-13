@@ -25,12 +25,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         val blackJack = BlackJack(layout)
+        blackJack.gameInit()
         val dealer = blackJack.dealer
         val you = blackJack.you
         val deck = blackJack.deck
-
-        //初期処理
-        blackJack.zoneReset(0, dealer, you, deck)
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
