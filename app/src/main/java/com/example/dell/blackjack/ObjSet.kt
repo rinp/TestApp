@@ -23,9 +23,9 @@ data class Deck(private val deckCount: Int = 2) {
             suits.flatMap { suit ->
                 (1..13).map { num ->
                     when (num) {
-                        1 -> Trump(suit = suit, num = num)
-                        in (11..13) -> Trump(suit = suit, num = num)
-                        else -> Trump(suit = suit, num = num)
+                        1 -> TrumpImpl(suit = suit, num = num)
+                        in (11..13) -> TrumpImpl(suit = suit, num = num)
+                        else -> TrumpImpl(suit = suit, num = num)
                     }
                 }
             }
@@ -54,8 +54,8 @@ data class Deck(private val deckCount: Int = 2) {
 
 }
 
-val dpVs = mutableMapOf(PLAYER to 0, DEALER to 0) //1ゲームの結果
-val player = Wager(0, 0)//ステータス
+// TODO 利用している？
+// val dpVs = mutableMapOf(PLAYER to 0, DEALER to 0) //1ゲームの結果
 
 /**
  * 山札
@@ -64,7 +64,12 @@ val player = Wager(0, 0)//ステータス
  * @isFace 表裏 初回は裏
  * @id 手札処理用
  */
-open class Trump(val suit: String, val num: Int)
+class TrumpImpl(override val suit: String, override val num: Int) : Trump
+
+interface Trump {
+    val suit: String
+    val num: Int
+}
 
 /**
  * カード
@@ -73,7 +78,8 @@ open class Trump(val suit: String, val num: Int)
  * @isHide 裏表
  */
 //class Hand(val card: View, val trump: Trump)
-class Hand(val card: LinearLayout, val trump: Trump, var isHide: Boolean) {
+class Hand(val card: LinearLayout? = null, val trump: Trump, var isHide: Boolean) : Trump by trump {
+
     fun open() {
         this.isHide = false
     }
@@ -88,27 +94,5 @@ class Hand(val card: LinearLayout, val trump: Trump, var isHide: Boolean) {
             else -> listOf(trump.num)
         }
     }
+
 }
-
-//ゲーム時のチップの流れ
-class Wager(var ownChip: Int, var betChip: Int = 0) {
-    fun setBet(bet: Int) {
-        this.betChip = bet
-    }
-
-    fun resetBet() {
-        this.betChip = 0
-    }
-
-    //勝負前チップ判定
-    fun callChip(): Boolean {
-        return this.ownChip >= this.betChip
-    }
-
-    //勝負後のチップ処理
-    fun resultChip(dividend: Double) {
-        val rst: Double = (this.ownChip - this.betChip) + (this.betChip * dividend)
-        this.ownChip = rst.toInt()
-    }
-}
-

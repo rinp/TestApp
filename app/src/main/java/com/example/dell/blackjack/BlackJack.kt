@@ -6,19 +6,18 @@ import android.view.View
 ////カードルール
 private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
 
-private const val LOSEOS: Double = 0.0 //敗北時配当
-private const val WINOS: Double = 3.0 //勝利時配当
-private const val BJOS: Double = 3.5 //BJ勝利時配当
-
-class BlackJack(private val gl: GameLayout) {
+class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip: Int) {
 
     val dealer = Dealer()
-    val you = Player()
-    val deck = Deck()
+    private val you = Player(playerChip)
+    private val deck = Deck()
 
     fun hit() {
         val card = deck.dealCard()
-        you.addCard(gl.handZone, card)
+        val handCard = you.addCard(card)
+
+        gl.showUserHand(handCard)
+
         val pCS = you.printScore(gl.playerCS)
         // TODO プレイヤーがカードを引く場面でディーラーのスコアの再計算は必要なのか？
         // val dCS = dealer.printScore(gl.dealerCS)
@@ -33,12 +32,14 @@ class BlackJack(private val gl: GameLayout) {
 
         //22以上<Bust>で敗北
         if (pCS > BLACKJACK) {
-            val dCS = dealer.printScore(gl.dealerCS)
-            dealer.openHand(gl.dealerZone)
+            turnEnd()
+
+            val dealerHands = dealer.openHand()
+            gl.resetShowDealerHands(dealerHands)
             gl.hit.isEnabled = false
             gl.stand.isEnabled = false
-            gl.result.text = cmpScore(pCS, dCS, player).output
-            gl.nextSet()
+            gl.result.text = issue().output
+            gl.nextSet(you.chip)
         }
     }
 
@@ -46,12 +47,10 @@ class BlackJack(private val gl: GameLayout) {
         gl.stand.isEnabled = false
         gl.hit.isEnabled = false
         //結果
-        val pCS = you.printScore(gl.playerCS)
-        val dCS = dealer.printScore(gl.dealerCS)
         dealerTurn()
-        gl.result.text = cmpScore(pCS, dCS, player).output
+        gl.result.text = issue().output
 
-        gl.nextSet()
+        gl.nextSet(you.chip)
     }
 
     fun nextGame() {
@@ -61,12 +60,21 @@ class BlackJack(private val gl: GameLayout) {
     }
 
     private fun dealerTurn() {
-        dealer.openHand(gl.dealerZone)
-        var dealerScore = dealer.calcScore()
+        val dealerHands = dealer.openHand()
+        gl.resetShowDealerHands(dealerHands)
+
+        var dealerScore = dealer.score
         while (dealerScore < DEALER_STOP_SCR) {
-            dealer.addCard(gl.dealerZone, deck.dealCard())
+            val hand = dealer.addCard(deck.dealCard())
+            gl.showDealerHand(hand)
             dealerScore = dealer.calcScore()
         }
+    }
+
+    private fun turnEnd() {
+        val issue = issue()
+        moveChip(issue)
+
     }
 
     // MainActivityを開いた際は0
@@ -80,7 +88,7 @@ class BlackJack(private val gl: GameLayout) {
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
         //場のカード情報の削除
-        gl.handZone.removeAllViews()
+        gl.userZone.removeAllViews()
         gl.dealerZone.removeAllViews()
 
         gl.result.text = ""
@@ -90,7 +98,7 @@ class BlackJack(private val gl: GameLayout) {
         gl.stand.text = "stand"
 
         //残りチップの判定
-        if (!player.callChip()) {
+        if (!(you.chip >= betChip)) {
             gl.socView.visibility = View.VISIBLE
         }
         if (status == 0) {
@@ -99,8 +107,11 @@ class BlackJack(private val gl: GameLayout) {
         }
 
         //手札生成(プレイヤー、ディーラー)
-        you.makeHand(gl.handZone, deck)
-        dealer.makeHand(gl.dealerZone, deck)
+        val userHands = you.makeHand(deck)
+        gl.showUserHands(userHands)
+        val dealerHands = dealer.makeHand(deck)
+        gl.showDealerHands(dealerHands)
+
         //合計値の算出
         you.printScore(gl.playerCS)
         dealer.printScore(gl.dealerCS)
@@ -115,7 +126,7 @@ class BlackJack(private val gl: GameLayout) {
         //player.setBet(BET1)
         //情報の画面表示
         gl.ownChip.text = "chip: $chip"
-        gl.bet.text = "bet: ${player.betChip}"
+        gl.bet.text = "bet: $betChip"
         //初回カードの判定
         val playerFstScore = you.score
         val dealerFstScore = dealer.calcScore()
@@ -127,7 +138,9 @@ class BlackJack(private val gl: GameLayout) {
         }
         if (dealerFstScore == BLACKJACK) {
             //ディーラーBJだと強制勝負
-            dealer.openHand(gl.dealerZone)
+            val dealerHands2 = dealer.openHand()
+            gl.resetShowDealerHands(dealerHands2)
+
             gl.dealerCS.text = "Dealer:$BLACKJACK <BJ>"
             you.printScore(gl.playerCS)
             //プレイヤーの操作は不可
@@ -136,30 +149,28 @@ class BlackJack(private val gl: GameLayout) {
         }
     }
 
-    fun processChips(judge: Judge, rst: Wager) {
+    private fun moveChip(judge: Judge) {
         when (judge) {
-            Judge.BJ_WIN -> rst.resultChip(BJOS)
-            Judge.WIN -> rst.resultChip(WINOS)
-            Judge.LOSE -> rst.resultChip(LOSEOS)
             Judge.PUSH -> return
+            else -> {
+                val dividend: Int = (this.betChip * judge.dividendPercent).toInt()
+                you.chip += dividend
+
+            }
         }
+
     }
 
-    /**
-     * 勝負判定
-     * BJWIN 0
-     * WIN 1
-     * LOSE 2
-     * PUSH 3
-     */
-    fun cmpScore(playerScr: Int, dealerScr: Int, rst: Wager): Judge {
+    private fun issue(): Judge {
+        val playerScr = you.score
+        val dealerScr = dealer.score
+
         val bustFlgP = playerScr > BLACKJACK
         val bustFlgD = dealerScr > BLACKJACK
         val bjFlgP = playerScr == BLACKJACK
-        val result = when {
+        return when {
             bustFlgP -> Judge.LOSE
             bustFlgD -> {
-                // TODO あってる？
                 if (bjFlgP) {
                     Judge.BJ_WIN
                 }
@@ -174,10 +185,5 @@ class BlackJack(private val gl: GameLayout) {
             playerScr < dealerScr -> Judge.LOSE
             else -> Judge.PUSH
         }
-
-        processChips(result, rst)
-
-        return result
-
     }
 }

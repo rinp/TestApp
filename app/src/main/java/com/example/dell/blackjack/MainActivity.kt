@@ -24,11 +24,13 @@ class MainActivity : AppCompatActivity() {
                 endsCards, socView, caption00, bet
         )
 
-        val blackJack = BlackJack(layout)
+        val betChip = intent.getIntExtra("BET_CHIP",-1)
+        if(betChip<0){
+            throw RuntimeException("ベットしたチップ数が取得できない")
+        }
+        val blackJack = BlackJack(layout, loadChip(this.applicationContext), betChip)
+
         blackJack.gameInit()
-        val dealer = blackJack.dealer
-        val you = blackJack.you
-        val deck = blackJack.deck
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
@@ -88,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             interstitialAd?.show()
         } else {
             Toast.makeText(this, "Ad did not load", Toast.LENGTH_SHORT).show()
+            //
             goToNextLevel()
         }
     }
@@ -126,7 +129,8 @@ class MainActivity : AppCompatActivity() {
 //        level.text = "Level " + (++currentLevel)
         interstitialAd = newInterstitialAd()
         loadInterstitial()
-        player.resetBet()
+        // XXX 広告とプレイヤーのチップ・ベット数は変動させるべきでないだろう。
+        // player.resetBet()
         val intent = Intent(this, StartMenu::class.java)
         startActivity(intent)
         finish()

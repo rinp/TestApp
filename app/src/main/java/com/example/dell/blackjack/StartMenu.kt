@@ -49,17 +49,17 @@ class StartMenu : AppCompatActivity() {
 
         //各BET
         start500Bet.setOnClickListener {
-            player.setBet(BET1)
+            gameView.putExtra("BET_CHIP", BET1)
             finish()
             startActivity(gameView)
         }
         start1000Bet.setOnClickListener {
-            player.setBet(BET2)
+            gameView.putExtra("BET_CHIP", BET2)
             finish()
             startActivity(gameView)
         }
         start5000Bet.setOnClickListener {
-            player.setBet(BET3)
+            gameView.putExtra("BET_CHIP", BET3)
             finish()
             startActivity(gameView)
         }
@@ -164,8 +164,7 @@ class StartMenu : AppCompatActivity() {
             start5000Bet.text = "$BET3"
         }
 
-        //画面に表示
-        player.ownChip = chip
+        //TODO 用途確認
         nowChipStartMenu.text = chip.toString()
     }
 }

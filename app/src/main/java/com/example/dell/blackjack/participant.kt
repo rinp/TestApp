@@ -9,19 +9,24 @@ import org.jetbrains.anko.*
 
 private const val HAND_NUM: Int = 2 //初回の手札の数
 
-class Player {
+class Player(playerChip: Int) {
     private var hand = mutableListOf<Hand>() //手札(プレイヤー)
     var score: Int = 0
         private set
 
-    fun addCard(userZone: LinearLayout, trump: Trump) {
-        addCard(hand, userZone, trump)
+    var chip = playerChip
+        internal set
+
+    fun addCard(trump: Trump): Hand {
+        val handCard = addCard(trump)
         score = calcScore(hand)
+        return handCard
     }
 
-    fun makeHand(handZone: LinearLayout, deck: Deck) {
-        makeHand(handZone, hand, true, deck)
+    fun makeHand(deck: Deck): MutableList<Hand> {
+        makeHand(hand, true, deck)
         score = calcScore(hand)
+        return hand
     }
 
     fun printScore(playerCS: TextView): Int {
@@ -34,14 +39,16 @@ class Dealer {
     var score: Int = 0
         private set
 
-    fun addCard(userZone: LinearLayout, trump: Trump) {
-        addCard(hand, userZone, trump)
+    fun addCard(trump: Trump): Hand {
+        val addCard = addCard(hand, trump)
         score = calcScore(hand)
+        return addCard
     }
 
-    fun makeHand(handZone: LinearLayout, deck: Deck) {
-        makeHand(handZone, hand, false, deck)
+    fun makeHand(deck: Deck): MutableList<Hand> {
+        makeHand(hand, false, deck)
         score = calcScore(hand)
+        return hand
     }
 
     fun printScore(playerCS: TextView): Int {
@@ -53,47 +60,19 @@ class Dealer {
     }
 
     @SuppressLint("SetTextI18n")
-    fun openHand(userZone: LinearLayout) {
-        for (d in hand) {
-            if (!d.isHide) {
-                continue
-            }
-            d.card.linearLayout {
-                textView {
-                    text = "${d.trump.suit}\n${d.trump.num}"
-                    backgroundColor = Color.parseColor(CARDF)
-                }.lparams(width = userZone.width) {
-                    width = dip(CARDW)
-                    height = dip(CARDH)
-                    gravity = Gravity.START
-                    horizontalMargin = dip(5)
-                    verticalMargin = dip(5)
-                }
-            }
-            //カードをオープン状態にする(スコアに含める)
-            d.open()
-            //裏のカードとして使用していた空のテキストビューを削除するindex2: 配列:0~3 count:3なので裏は配列:1(count-2)
-            d.card.removeView(d.card.getChildAt(d.card.childCount - 2))
-        }
+    fun openHand(): MutableList<Hand> {
+        hand.forEach { it.open() }
+        score = calcScore()
+        return hand
     }
 }
 
 //手札にカードを追加する
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-private fun addCard(user: MutableList<Hand>, userZone: LinearLayout, trump: Trump) {
-    user += Hand(userZone.linearLayout {
-        textView {
-            text = "${trump.suit}\n${trump.num}"
-            gravity = Gravity.LEFT
-            backgroundColor = Color.parseColor(CARDF)
-        }.lparams(width = userZone.width) {
-            width = dip(CARDW)
-            height = dip(CARDH)
-            gravity = Gravity.LEFT
-            horizontalMargin = dip(5)
-            verticalMargin = dip(5)
-        }
-    }, trump, false)
+private fun addCard(user: MutableList<Hand>, trump: Trump): Hand {
+    val card = Hand(trump = trump, isHide = false)
+    user += card
+    return card
 }
 
 
@@ -116,11 +95,12 @@ private fun calcCardScore(user: MutableList<Hand>, write: TextView, playerFlg: B
             write.text = "Dealer:$cc <BJ>"
         }
     }
-    if (playerFlg) {
-        dpVs[PLAYER] = cc
-    } else {
-        dpVs[DEALER] = cc
-    }
+    // 用途不明
+//    if (playerFlg) {
+//        dpVs[PLAYER] = cc
+//    } else {
+//        dpVs[DEALER] = cc
+//    }
     return cc
 }
 
@@ -143,35 +123,12 @@ fun calcScore(hands: List<Hand>): Int {
  * @user 手札を格納する変数
  */
 @SuppressLint("SetTextI18n", "RtlHardcoded")
-fun makeHand(userZone: LinearLayout, user: MutableList<Hand>, playerFlg: Boolean, deck: Deck) {
+fun makeHand(user: MutableList<Hand>, playerFlg: Boolean, deck: Deck) {
     user.clear()
     var score = 0
     for (i in 1..HAND_NUM) {
         val trump = deck.dealCard()
         score += trump.num
-        user += Hand(userZone.linearLayout {
-            textView {
-                backgroundColor = Color.parseColor(CARDF)
-                text = "${trump.suit}\n${trump.num}"
-                if (i > 1 && !playerFlg) {
-                    //2枚目以降ディーラー
-                    backgroundColor = Color.parseColor(CARDB)
-                    text = ""
-                }
-                gravity = Gravity.LEFT
-            }.lparams(width = userZone.width) {
-                width = dip(CARDW)
-                height = dip(CARDH)
-                gravity = Gravity.LEFT
-                horizontalMargin = dip(5)
-                verticalMargin = dip(5)
-            }
-        }, trump, i > 1 && !playerFlg)
+        user += Hand(trump = trump, isHide = i > 1 && !playerFlg)
     }
-    if (playerFlg) {
-        dpVs[PLAYER] = score
-    } else {
-        dpVs[DEALER] = score
-    }
-
 }
