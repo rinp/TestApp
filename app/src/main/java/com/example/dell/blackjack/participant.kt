@@ -1,11 +1,7 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.view.Gravity
-import android.widget.LinearLayout
 import android.widget.TextView
-import org.jetbrains.anko.*
 
 private const val HAND_NUM: Int = 2 //初回の手札の数
 
