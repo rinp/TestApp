@@ -1,7 +1,5 @@
 package com.example.dell.blackjack
 
-import android.widget.LinearLayout
-
 /*定数*/
 const val BLACKJACK: Int = 21 //BLACKJACKの値
 ////所持金関係
@@ -77,8 +75,7 @@ interface Trump {
  * @Trump カードの情報
  * @isHide 裏表
  */
-//class Hand(val card: View, val trump: Trump)
-class Hand(val card: LinearLayout? = null, val trump: Trump, var isHide: Boolean) : Trump by trump {
+class Hand(val trump: Trump, var isHide: Boolean) : Trump by trump {
 
     fun open() {
         this.isHide = false

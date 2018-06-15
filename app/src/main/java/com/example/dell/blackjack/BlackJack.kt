@@ -19,8 +19,6 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
         gl.showUserHand(handCard)
 
         val pCS = you.printScore(gl.playerCS)
-        // TODO プレイヤーがカードを引く場面でディーラーのスコアの再計算は必要なのか？
-        // val dCS = dealer.printScore(gl.dealerCS)
 
         gl.countCards(gl.endsCards, deck)
 
@@ -32,14 +30,7 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
 
         //22以上<Bust>で敗北
         if (pCS > BLACKJACK) {
-            turnEnd()
-
-            val dealerHands = dealer.openHand()
-            gl.resetShowDealerHands(dealerHands)
-            gl.hit.isEnabled = false
-            gl.stand.isEnabled = false
-            gl.result.text = issue().output
-            gl.nextSet(you.chip)
+            dealerTurn()
         }
     }
 
@@ -60,6 +51,10 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
     }
 
     private fun dealerTurn() {
+
+        gl.hit.isEnabled = false
+        gl.stand.isEnabled = false
+
         val dealerHands = dealer.openHand()
         gl.resetShowDealerHands(dealerHands)
 
@@ -69,12 +64,16 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
             gl.showDealerHand(hand)
             dealerScore = dealer.calcScore()
         }
+        turnEnd()
     }
 
     private fun turnEnd() {
         val issue = issue()
+
+        gl.result.text = issue.output
         moveChip(issue)
 
+        gl.nextSet(you.chip)
     }
 
     // MainActivityを開いた際は0
@@ -84,7 +83,7 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
     }
 
     @SuppressLint("SetTextI18n")
-    fun zoneReset(status: Int, dealer: Dealer, you: Player, deck: Deck) {
+    private fun zoneReset(status: Int, dealer: Dealer, you: Player, deck: Deck) {
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
         //場のカード情報の削除
@@ -98,7 +97,7 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
         gl.stand.text = "stand"
 
         //残りチップの判定
-        if (!(you.chip >= betChip)) {
+        if (you.chip < betChip) {
             gl.socView.visibility = View.VISIBLE
         }
         if (status == 0) {
@@ -155,10 +154,8 @@ class BlackJack(private val gl: GameLayout, playerChip: Int, private val betChip
             else -> {
                 val dividend: Int = (this.betChip * judge.dividendPercent).toInt()
                 you.chip += dividend
-
             }
         }
-
     }
 
     private fun issue(): Judge {
