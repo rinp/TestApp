@@ -37,7 +37,6 @@ data class GameLayout(
     @SuppressLint("SetTextI18n")
     fun nextSet(playerChip: Int) {
         ownChip.text = "chip: $playerChip"
-        setChip(applicationContext, playerChip)
         nextGame.visibility = View.VISIBLE
         backTop1.visibility = View.VISIBLE
     }

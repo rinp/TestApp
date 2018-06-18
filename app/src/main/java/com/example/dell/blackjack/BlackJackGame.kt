@@ -1,12 +1,18 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import android.view.View
 
 ////カードルール
 private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
 
-class BlackJackGame(private val gl: GameLayout, playerChip: Int, private val betChip: Int) {
+class BlackJackGame(private val gl: GameLayout,
+                    playerChip: Int,
+                    private val betChip: Int,
+                    private val applicationContext: Context
+) {
 
     val dealer = Dealer()
     private val you = Player(playerChip)
@@ -46,12 +52,14 @@ class BlackJackGame(private val gl: GameLayout, playerChip: Int, private val bet
     }
 
     fun nextGame() {
-        zoneReset(1, dealer, you, deck)
+        zoneReset(1)
         gl.nextGame.visibility = View.GONE
         gl.backTop1.visibility = View.GONE
     }
 
     private fun dealerTurn() {
+        Log.d("game", "ディーラーターン開始")
+        Log.d("game", "ディーラースコア${dealer.score}")
 
         gl.hit.isEnabled = false
         gl.stand.isEnabled = false
@@ -63,6 +71,7 @@ class BlackJackGame(private val gl: GameLayout, playerChip: Int, private val bet
         while (dealerScore < DEALER_STOP_SCR) {
             val hand = dealer.addCard(deck.dealCard())
             gl.showDealerHand(hand)
+            gl.calcCardScore(dealer.hand, gl.dealerCS)
             dealerScore = dealer.score.num
         }
         turnEnd()
@@ -80,11 +89,11 @@ class BlackJackGame(private val gl: GameLayout, playerChip: Int, private val bet
     // MainActivityを開いた際は0
     // Next Game では1
     fun gameInit(status: Int = 0) {
-        zoneReset(status, dealer, you, deck)
+        zoneReset(status)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun zoneReset(status: Int, dealer: Dealer, you: Player, deck: Deck) {
+    private fun zoneReset(status: Int) {
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
         //場のカード情報の削除
@@ -152,13 +161,8 @@ class BlackJackGame(private val gl: GameLayout, playerChip: Int, private val bet
     }
 
     private fun moveChip(judge: Judge) {
-        when (judge) {
-            Judge.PUSH -> return
-            else -> {
-                val dividend: Int = (this.betChip * judge.dividendPercent).toInt()
-                you.chip += dividend
-            }
-        }
+        you.chip += (betChip * judge.dividendPercent).toInt()
+        setChip(applicationContext, you.chip)
     }
 
     private fun issue(): Judge {

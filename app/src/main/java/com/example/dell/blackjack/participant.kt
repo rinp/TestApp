@@ -1,6 +1,7 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
+import android.util.Log
 
 private const val HAND_NUM: Int = 2 //初回の手札の数
 
@@ -13,7 +14,7 @@ class Player(playerChip: Int) {
         internal set
 
     fun addCard(trump: Trump): Hand {
-        val handCard = addCard(trump)
+        val handCard = addCard(hand,trump)
         score = calcScore(hand)
         return handCard
     }
@@ -34,6 +35,7 @@ class Dealer {
     fun addCard(trump: Trump): Hand {
         val addCard = addCard(hand, trump)
         score = calcScore(hand)
+        Log.d("game", "ディーラースコア${this.score}")
         return addCard
     }
 
@@ -43,7 +45,6 @@ class Dealer {
         return hand
     }
 
-    @SuppressLint("SetTextI18n")
     fun openHand(): MutableList<Hand> {
         hand.forEach { it.open() }
         score = calcScore(hand)

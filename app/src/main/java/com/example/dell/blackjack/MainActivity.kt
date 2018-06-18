@@ -24,11 +24,11 @@ class MainActivity : AppCompatActivity() {
                 endsCards, socView, caption00, bet
         )
 
-        val betChip = intent.getIntExtra("BET_CHIP",-1)
-        if(betChip<0){
+        val betChip = intent.getIntExtra("BET_CHIP", -1)
+        if (betChip < 0) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
-        val blackJack = BlackJackGame(layout, loadChip(this.applicationContext), betChip)
+        val blackJack = BlackJackGame(layout, loadChip(this.applicationContext), betChip, applicationContext)
 
         blackJack.gameInit()
 
