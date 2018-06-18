@@ -1,13 +1,12 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
-import android.widget.TextView
 
 private const val HAND_NUM: Int = 2 //初回の手札の数
 
 class Player(playerChip: Int) {
-    private var hand = mutableListOf<Hand>() //手札(プレイヤー)
-    var score: Int = 0
+    var hand = mutableListOf<Hand>() //手札(プレイヤー)
+    lateinit var score: Score
         private set
 
     var chip = playerChip
@@ -25,14 +24,11 @@ class Player(playerChip: Int) {
         return hand
     }
 
-    fun printScore(playerCS: TextView): Int {
-        return calcCardScore(hand, playerCS, true)
-    }
 }
 
 class Dealer {
-    private var hand = mutableListOf<Hand>() //手札
-    var score: Int = 0
+    var hand = mutableListOf<Hand>() //手札
+    lateinit var score: Score
         private set
 
     fun addCard(trump: Trump): Hand {
@@ -47,18 +43,10 @@ class Dealer {
         return hand
     }
 
-    fun printScore(playerCS: TextView): Int {
-        return calcCardScore(hand, playerCS, false)
-    }
-
-    fun calcScore(): Int {
-        return calcScore(hand)
-    }
-
     @SuppressLint("SetTextI18n")
     fun openHand(): MutableList<Hand> {
         hand.forEach { it.open() }
-        score = calcScore()
+        score = calcScore(hand)
         return hand
     }
 }
@@ -71,45 +59,64 @@ private fun addCard(user: MutableList<Hand>, trump: Trump): Hand {
     return card
 }
 
-
-//スコアに対しての画面書き込みを行う
-@SuppressLint("SetTextI18n")
-private fun calcCardScore(user: MutableList<Hand>, write: TextView, playerFlg: Boolean): Int {
-    val cc = calcScore(user)
-    if (write.text.indexOf("Player") != -1) {
-        write.text = "Player:$cc"
-        if (cc > BLACKJACK) {
-            write.text = "Player:$cc <Bust>"
-        } else if (cc == BLACKJACK) {
-            write.text = "Player:$cc <BJ>"
-        }
-    } else {
-        write.text = "Dealer:$cc"
-        if (cc > BLACKJACK) {
-            write.text = "Dealer:$cc <Bust>"
-        } else if (cc == BLACKJACK) {
-            write.text = "Dealer:$cc <BJ>"
-        }
-    }
-    // 用途不明
-//    if (playerFlg) {
-//        dpVs[PLAYER] = cc
-//    } else {
-//        dpVs[DEALER] = cc
-//    }
-    return cc
-}
-
 //スコア計算
-fun calcScore(hands: List<Hand>): Int {
+fun calcScore(hands: List<Hand>): Score {
+    /*定数*/
 
     val reduce: List<Int> = hands.map { it.point() }.reduceRight { list, acc -> list.flatMap { num -> acc.map { it + num } } }
 
-    if (BLACKJACK < reduce.min()!!) {
-        return reduce.min()!!
+    if (BLACK_JACK_NUM < reduce.min()!!) {
+        return Score.Bust(reduce.min()!!)
     }
 
-    return reduce.filter { it <= BLACKJACK }.max()!!
+    if (hands.size == 2 && reduce.any { it == BLACK_JACK_NUM }) {
+        return Score.BlackJack
+    }
+
+    return Score.Point(reduce.filter { it <= BLACK_JACK_NUM }.max()!!)
+}
+
+sealed class Score {
+    operator fun compareTo(other: Score): Int {
+        return when {
+            this === Score.BlackJack -> {
+                if (other === Score.BlackJack) {
+                    0
+                } else {
+                    1
+                }
+
+            }
+            this is Score.Bust -> {
+                if (other is Score.Bust) {
+                    0
+                } else {
+                    -1
+                }
+            }
+            this is Score.Point -> {
+                return when {
+                    other === Score.BlackJack -> -1
+                    other is Score.Bust -> 1
+                    other is Score.Point -> this.num.compareTo(other.num)
+                    else -> throw IllegalArgumentException()
+                }
+            }
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    abstract val num: Int
+
+
+    object BlackJack : Score() {
+        override val num: Int
+            get() = 21
+    }
+
+    class Bust(override val num: Int) : Score()
+
+    class Point(override val num: Int) : Score()
 
 }
 

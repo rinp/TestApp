@@ -120,4 +120,28 @@ data class GameLayout(
         showDealerHands(dealerHands)
     }
 
+
+    //スコアに対しての画面書き込みを行う
+    @SuppressLint("SetTextI18n")
+    fun calcCardScore(user: MutableList<Hand>, write: TextView): Score {
+        val score: Score = calcScore(user)
+        val cc: Int = calcScore(user).num
+        if (write.text.indexOf("Player") != -1) {
+            write.text = "Player:$cc"
+            if (score === Score.BlackJack) {
+                write.text = "Player:$cc <Bust>"
+            } else if (score === Score.BlackJack) {
+                write.text = "Player:$cc <BJ>"
+            }
+        } else {
+            write.text = "Dealer:$cc"
+            if (score is Score.Bust) {
+                write.text = "Dealer:$cc <Bust>"
+            } else if (score === Score.BlackJack) {
+                write.text = "Dealer:$cc <BJ>"
+            }
+        }
+        return score
+    }
+
 }

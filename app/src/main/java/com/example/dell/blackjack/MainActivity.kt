@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         if(betChip<0){
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
-        val blackJack = BlackJack(layout, loadChip(this.applicationContext), betChip)
+        val blackJack = BlackJackGame(layout, loadChip(this.applicationContext), betChip)
 
         blackJack.gameInit()
 

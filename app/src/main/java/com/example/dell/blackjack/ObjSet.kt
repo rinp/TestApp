@@ -1,7 +1,5 @@
 package com.example.dell.blackjack
 
-/*定数*/
-const val BLACKJACK: Int = 21 //BLACKJACKの値
 ////所持金関係
 const val FIRSTCHIP: Int = 3000 //初回起動時チップ
 const val DEBAGMANYCHIP: Int = 1000000 //テスト用
