@@ -62,10 +62,10 @@ data class GameLayout(
     | else:ownNumber
     |
     |【Rate】
-    | Win(BJ):×2.5
-    | Win:×2
-    | PUSH:×1
-    | LOSE:×0
+    | Win(BJ):×${Judge.BJ_WIN.dividendPercent}
+    | Win:×${Judge.WIN.dividendPercent}
+    | PUSH:×${Judge.PUSH.dividendPercent}
+    | LOSE:×${Judge.LOSE.dividendPercent}
 """.trimMargin()
     }
 
@@ -119,7 +119,6 @@ data class GameLayout(
         dealerZone.removeAllViewsInLayout()
         showDealerHands(dealerHands)
     }
-
 
     //スコアに対しての画面書き込みを行う
     @SuppressLint("SetTextI18n")
