@@ -1,6 +1,4 @@
-@file:Suppress("UNREACHABLE_CODE", "NAME_SHADOWING")
-
-package com.example.dell.blackjack
+package com.example.dell.blackjack.domain
 
 enum class Judge(val output: String, val dividendPercent: Double) {
     BJ_WIN("BJ WIN", 2.5),

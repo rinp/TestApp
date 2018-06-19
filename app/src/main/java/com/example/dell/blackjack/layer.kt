@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.example.dell.blackjack.domain.*
 import org.jetbrains.anko.*
 
 // 最終的にはMainActivityに戻ることになる。
@@ -121,23 +122,30 @@ data class GameLayout(
 
     //スコアに対しての画面書き込みを行う
     @SuppressLint("SetTextI18n")
-    fun calcCardScore(user: MutableList<Hand>, write: TextView): Score {
-        val score: Score = calcScore(user)
-        val cc: Int = calcScore(user).num
-        if (write.text.indexOf("Player") != -1) {
-            write.text = "Player:$cc"
-            if (score === Score.BlackJack) {
-                write.text = "Player:$cc <Bust>"
-            } else if (score === Score.BlackJack) {
-                write.text = "Player:$cc <BJ>"
-            }
-        } else {
-            write.text = "Dealer:$cc"
-            if (score is Score.Bust) {
-                write.text = "Dealer:$cc <Bust>"
-            } else if (score === Score.BlackJack) {
-                write.text = "Dealer:$cc <BJ>"
-            }
+    fun calcUserCardScore(user: User, write: TextView): Score {
+        val score: Score = user.score
+        val cc: Int = score.num
+
+        write.text = "User:$cc"
+        if (score === Score.BlackJack) {
+            write.text = "User:$cc <Bust>"
+        } else if (score === Score.BlackJack) {
+            write.text = "User:$cc <BJ>"
+        }
+        return score
+    }
+
+    //スコアに対しての画面書き込みを行う
+    @SuppressLint("SetTextI18n")
+    fun calcDealerCardScore(dealer: Dealer, write: TextView): Score {
+        val score: Score = dealer.score
+        val cc: Int = score.num
+
+        write.text = "Dealer:$cc"
+        if (score is Score.Bust) {
+            write.text = "Dealer:$cc <Bust>"
+        } else if (score === Score.BlackJack) {
+            write.text = "Dealer:$cc <BJ>"
         }
         return score
     }

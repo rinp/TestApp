@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.View
+import com.example.dell.blackjack.domain.*
 
 ////カードルール
 private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
@@ -15,7 +16,7 @@ class BlackJackGame(private val gl: GameLayout,
 ) {
 
     val dealer = Dealer()
-    private val you = Player(playerChip)
+    private val you = User(playerChip)
     private val deck = Deck()
 
     fun hit() {
@@ -24,7 +25,7 @@ class BlackJackGame(private val gl: GameLayout,
 
         gl.showUserHand(handCard)
 
-        gl.calcCardScore(you.hand, gl.playerCS)
+        gl.calcUserCardScore(you, gl.playerCS)
 
         gl.countCards(gl.endsCards, deck)
         val pCS = you.score
@@ -71,7 +72,7 @@ class BlackJackGame(private val gl: GameLayout,
         while (dealerScore < DEALER_STOP_SCR) {
             val hand = dealer.addCard(deck.dealCard())
             gl.showDealerHand(hand)
-            gl.calcCardScore(dealer.hand, gl.dealerCS)
+            gl.calcDealerCardScore(dealer, gl.dealerCS)
             dealerScore = dealer.score.num
         }
         turnEnd()
@@ -122,8 +123,8 @@ class BlackJackGame(private val gl: GameLayout,
         gl.showDealerHands(dealerHands)
 
         //合計値の表示
-        gl.calcCardScore(you.hand, gl.playerCS)
-        gl.calcCardScore(dealer.hand, gl.dealerCS)
+        gl.calcUserCardScore(you, gl.playerCS)
+        gl.calcDealerCardScore(dealer, gl.dealerCS)
 
         //山札の残り
         gl.countCards(gl.endsCards, deck)
@@ -152,7 +153,7 @@ class BlackJackGame(private val gl: GameLayout,
             gl.resetShowDealerHands(dealerHands2)
 
             gl.dealerCS.text = "Dealer:$BLACK_JACK_NUM <BJ>"
-            gl.calcCardScore(you.hand, gl.playerCS)
+            gl.calcUserCardScore(you, gl.playerCS)
 //            you.printScore(gl.playerCS)
             //プレイヤーの操作は不可
             gl.hit.isEnabled = false
