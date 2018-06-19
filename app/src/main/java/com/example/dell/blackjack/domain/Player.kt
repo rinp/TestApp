@@ -1,10 +1,13 @@
 package com.example.dell.blackjack.domain
 
 import android.annotation.SuppressLint
+import com.example.dell.blackjack.BLACK_JACK_NUM
 
-private const val HAND_NUM: Int = 2 //初回の手札の数
 
 interface Player {
+    companion object {
+        private const val HAND_NUM: Int = 2 //初回の手札の数
+    }
 
     //手札にカードを追加する
     @SuppressLint("SetTextI18n", "RtlHardcoded")

@@ -6,5 +6,3 @@ enum class Judge(val output: String, val dividendPercent: Double) {
     LOSE("LOSE", 0.0),
     PUSH("PUSH", 1.0)
 }
-
-const val BLACK_JACK_NUM: Int = 21 //BLACKJACKの値

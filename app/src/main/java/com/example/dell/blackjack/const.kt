@@ -7,3 +7,4 @@ const val DEBAGMANYCHIP: Int = 1000000 //テスト用
 const val BET1: Int = 500 //ベット1
 const val BET2: Int = 1000 //ベット2
 const val BET3: Int = 5000 //ベット3
+const val BLACK_JACK_NUM: Int = 21 //BLACKJACKの値
