@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.dell.blackjack.domain.toChip
@@ -50,7 +51,9 @@ class MainActivity : AppCompatActivity() {
 
         //次のゲームを始める
         nextGame.setOnClickListener {
+            Log.d("main", "next click start")
             blackJack.nextGame()
+            Log.d("main", "next click end")
         }
 
         //TOPに戻る

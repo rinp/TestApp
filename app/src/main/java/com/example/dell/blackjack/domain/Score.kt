@@ -2,6 +2,10 @@ package com.example.dell.blackjack.domain
 
 
 sealed class Score {
+    override fun toString(): String {
+        return this.num.toString()
+    }
+
     operator fun compareTo(other: Score): Int {
         return when {
             this === BlackJack -> {

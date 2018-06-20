@@ -53,9 +53,11 @@ class BlackJackGame(private val gl: GameLayout,
     }
 
     fun nextGame() {
+        Log.d("game", "nextGame in")
         zoneReset(1)
         gl.nextGame.visibility = View.GONE
         gl.backTop1.visibility = View.GONE
+        Log.d("game", "nextGame end")
     }
 
     private fun dealerTurn() {
@@ -95,6 +97,7 @@ class BlackJackGame(private val gl: GameLayout,
 
     @SuppressLint("SetTextI18n")
     private fun zoneReset(status: Int) {
+        Log.d("game", "zoneReset in")
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
         //場のカード情報の削除
@@ -111,10 +114,13 @@ class BlackJackGame(private val gl: GameLayout,
         if (you.chip < betChip) {
             gl.socView.visibility = View.VISIBLE
         }
+
         if (status == 0) {
             gl.setCaption()
             deck.init()
         }
+
+        Log.d("game", "zoneReset 手札再配布")
 
         //手札生成(プレイヤー、ディーラー)
         val userHands = you.makeHand(deck)
@@ -159,6 +165,7 @@ class BlackJackGame(private val gl: GameLayout,
             gl.hit.isEnabled = false
             gl.hit.text = "BJ"
         }
+        Log.d("game", "zoneReset end")
     }
 
     private fun moveChip(judge: Judge) {

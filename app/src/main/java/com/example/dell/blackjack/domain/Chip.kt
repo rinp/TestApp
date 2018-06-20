@@ -21,6 +21,10 @@ class Chip(var num: Int) {
         return (this.num * times).toChip()
     }
 
+    override fun toString(): String {
+        return this.num.toString()
+    }
+
 }
 
 
