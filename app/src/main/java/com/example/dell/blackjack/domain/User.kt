@@ -1,6 +1,6 @@
 package com.example.dell.blackjack.domain
 
-class User(playerChip: Int) : Player {
+class User(playerChip: Chip) : Player {
     var hand = mutableListOf<Hand>() //手札(プレイヤー)
     lateinit var score: Score
         private set

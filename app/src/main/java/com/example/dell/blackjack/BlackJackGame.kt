@@ -10,8 +10,8 @@ import com.example.dell.blackjack.domain.*
 private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
 
 class BlackJackGame(private val gl: GameLayout,
-                    playerChip: Int,
-                    private val betChip: Int,
+                    playerChip: Chip,
+                    private val betChip: Chip,
                     private val applicationContext: Context
 ) {
 
@@ -162,7 +162,7 @@ class BlackJackGame(private val gl: GameLayout,
     }
 
     private fun moveChip(judge: Judge) {
-        you.chip += (betChip * judge.dividendPercent).toInt()
+        you.chip += betChip * judge.dividendPercent
         setChip(applicationContext, you.chip)
     }
 

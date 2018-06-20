@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
+import com.example.dell.blackjack.domain.toChip
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
@@ -24,8 +25,8 @@ class MainActivity : AppCompatActivity() {
                 endsCards, socView, caption00, bet
         )
 
-        val betChip = intent.getIntExtra("BET_CHIP", -1)
-        if (betChip < 0) {
+        val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
+        if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
         val blackJack = BlackJackGame(layout, loadChip(this.applicationContext), betChip, applicationContext)

@@ -6,12 +6,22 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import com.example.dell.blackjack.domain.Chip
+import com.example.dell.blackjack.domain.toChip
 import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.activity_start.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class StartMenu : AppCompatActivity() {
+
+    companion object {
+        private val BET1: Chip = 500.toChip() //ベット1
+        private val BET2: Chip = 1000.toChip() //ベット2
+        private val BET3: Chip = 5000.toChip() //ベット3
+    }
+
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         val gameView = Intent(this, MainActivity::class.java)
@@ -82,7 +92,7 @@ class StartMenu : AppCompatActivity() {
         ////chipの格納されたプリファレンスを空にする
         debagChipClear.setOnClickListener {
             val chip = loadChip(this.applicationContext)
-            if (chip != -1) {
+            if (chip.notEmpty()) {
                 removePref(this.applicationContext)
             }
             startPrcs()
@@ -90,7 +100,7 @@ class StartMenu : AppCompatActivity() {
         ////チップを0にする
         debagChipEq0.setOnClickListener {
             val chip = loadChip(this.applicationContext)
-            if (chip != -1) {
+            if (chip.notEmpty()) {
                 setChip(this.applicationContext, 0)
             }
             startPrcs()
@@ -133,15 +143,15 @@ class StartMenu : AppCompatActivity() {
         var chip = loadChip(this.applicationContext)
 
         //プリファレンスがないときは初期値を入れる
-        if (chip == -1) {
+        if (chip.isEmpty()) {
             setChip(this.applicationContext, FIRSTCHIP)
             chip = loadChip(this.applicationContext)
         }
 
         //チップ所持数で掛けられるBETの処理
         start500Bet.isEnabled = chip >= BET1
-        start1000Bet.isEnabled = chip >= BET2 * 10
-        start5000Bet.isEnabled = chip >= BET3 * 10
+        start1000Bet.isEnabled = chip >= BET2
+        start5000Bet.isEnabled = chip >= BET3
 
         //各BETが掛けられないときの処理
         if (!start500Bet.isEnabled) {
@@ -154,12 +164,12 @@ class StartMenu : AppCompatActivity() {
             start500Bet.text = "$BET1"
         }
         if (!start1000Bet.isEnabled) {
-            start1000Bet.text = "chipOver\n${BET2 * 10}"
+            start1000Bet.text = "chipOver\n$BET2"
         } else {
             start1000Bet.text = "$BET2"
         }
         if (!start5000Bet.isEnabled) {
-            start5000Bet.text = "chipOver\n${BET3 * 10}"
+            start5000Bet.text = "chipOver\n$BET3"
         } else {
             start5000Bet.text = "$BET3"
         }
@@ -167,4 +177,8 @@ class StartMenu : AppCompatActivity() {
         //TODO 用途確認
         nowChipStartMenu.text = chip.toString()
     }
+}
+
+private fun Intent.putExtra(name: String, value: Chip) {
+    this.putExtra(name, value.num)
 }
