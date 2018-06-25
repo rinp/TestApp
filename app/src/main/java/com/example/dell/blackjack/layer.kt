@@ -24,14 +24,12 @@ data class GameLayout(
         val dealerZone: LinearLayout,
         val stand: Button,
         val result: TextView,
-        val ownChip: TextView,
         val nextGame: Button,
         val backTop1: Button,
         val applicationContext: Context,
         val endsCards: TextView,
         val socView: LinearLayout,
-        val caption00: TextView,
-        val bet: TextView
+        val caption00: TextView
 ) {
 
     /**
@@ -39,7 +37,7 @@ data class GameLayout(
      */
     @SuppressLint("SetTextI18n")
     fun nextSet(playerChip: Chip) {
-        ownChip.text = "chip: $playerChip"
+        view.renameOwnChip("chip: $playerChip")
         nextGame.visibility = View.VISIBLE
         backTop1.visibility = View.VISIBLE
     }

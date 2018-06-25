@@ -146,8 +146,9 @@ class BlackJackGame(
         ////仮置きtest(最低限のベットを行う)
         //player.setBet(BET1)
         //情報の画面表示
-        gl.ownChip.text = "chip: $chip"
-        gl.bet.text = "bet: $betChip"
+        view.renameOwnChip("chip: $chip")
+        view.renameBetChip("bet: $betChip")
+
         //初回カードの判定
         val playerFstScore: Score = you.score
         val dealerFstScore: Score = dealer.score

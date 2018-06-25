@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, stand, result, ownChip,
-                nextGame, backTop1, this.applicationContext,
-                endsCards,
-                socView, caption00, bet
+        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, stand, result, nextGame,
+                backTop1, this.applicationContext, endsCards,
+                socView,
+                caption00
         )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
@@ -157,6 +157,11 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun renameHitBtn(text:String){
         hit.text = text
     }
-
+    override fun renameBetChip(text: String) {
+        bet.text = text
+    }
+    override fun renameOwnChip(text: String) {
+        ownChip.text = text
+    }
 
 }

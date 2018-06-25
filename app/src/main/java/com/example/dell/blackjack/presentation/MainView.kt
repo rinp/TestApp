@@ -7,4 +7,7 @@ interface MainView {
     fun disabledHit()
     fun enableHit()
     fun renameHitBtn(text: String)
+    fun renameBetChip(text: String)
+    fun renameOwnChip(text: String)
+
 }
