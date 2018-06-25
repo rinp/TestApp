@@ -24,7 +24,10 @@ interface MainView {
     fun showBackTop()
     fun showSocView()
     fun removeAllCardZone()
-    fun addDealerCard(hand:Hand)
-    fun addPlayerCard(hand:Hand)
+    fun addDealerCard(hand: Hand)
+    fun addPlayerCard(hand: Hand)
+    fun addDealerCards(hands: List<Hand>)
+    fun addPlayerCards(hands: List<Hand>)
+    fun showAllDealerHand(dealerHands: MutableList<Hand>)
 
 }

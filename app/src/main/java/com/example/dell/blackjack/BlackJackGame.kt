@@ -3,7 +3,6 @@ package com.example.dell.blackjack
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import android.view.View
 import com.example.dell.blackjack.domain.*
 import com.example.dell.blackjack.presentation.MainView
 
@@ -12,7 +11,6 @@ private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カ�
 
 class BlackJackGame(
         private val view: MainView,
-        private val gl: GameLayout,
         playerChip: Chip,
         private val betChip: Chip,
         private val applicationContext: Context
@@ -54,7 +52,7 @@ class BlackJackGame(
         dealerTurn()
         view.setResult(issue().output)
 
-        gl.nextSet(you.chip)
+        nextSet(you.chip)
     }
 
     fun nextGame() {
@@ -72,14 +70,14 @@ class BlackJackGame(
         view.disabledHit()
 
         val dealerHands = dealer.openHand()
-        gl.resetShowDealerHands(dealerHands)
+        view.showAllDealerHand(dealerHands)
 
         var dealerScore = dealer.score.num
         while (dealerScore < DEALER_STOP_SCR) {
             val hand = dealer.addCard(deck.dealCard())
-            gl.showDealerHand(hand)
+            view.addDealerCard(hand)
             val score: Score = dealer.score
-            gl.view.setDealerScore(score)
+            view.setDealerScore(score)
             dealerScore = dealer.score.num
         }
         turnEnd()
@@ -91,7 +89,7 @@ class BlackJackGame(
         view.setResult(issue.output)
         moveChip(issue)
 
-        gl.nextSet(you.chip)
+        nextSet(you.chip)
     }
 
     // MainActivityを開いた際は0
@@ -127,15 +125,15 @@ class BlackJackGame(
 
         //手札生成(プレイヤー、ディーラー)
         val userHands = you.makeHand(deck)
-        gl.showUserHands(userHands)
+        view.addPlayerCards(userHands)
         val dealerHands = dealer.makeHand(deck)
-        gl.showDealerHands(dealerHands)
+        view.addDealerCards(dealerHands)
 
         //合計値の表示
         val score: Score = you.score
-        gl.view.setPlayerScore(score)
+        view.setPlayerScore(score)
         val score1: Score = dealer.score
-        gl.view.setDealerScore(score1)
+        view.setDealerScore(score1)
 
         //山札の残り
         view.setDeckCount(deck.remainingCardCount())
@@ -162,11 +160,11 @@ class BlackJackGame(
         if (dealerFstScore === Score.BlackJack) {
             //ディーラーBJだと強制勝負
             val dealerHands2 = dealer.openHand()
-            gl.resetShowDealerHands(dealerHands2)
+            view.showAllDealerHand(dealerHands2)
 
             view.setDealerScore(dealer.score)
             val score1: Score = you.score
-            gl.view.setPlayerScore(score1)
+            view.setPlayerScore(score1)
             //            you.printScore(gl.playerCS)
             //プレイヤーの操作は不可
             view.disabledHit()
@@ -205,4 +203,15 @@ class BlackJackGame(
             else -> Judge.PUSH
         }
     }
+
+    /**
+     * 次のゲームを始める
+     */
+    @SuppressLint("SetTextI18n")
+    private fun nextSet(playerChip: Chip) {
+        view.renameOwnChip("chip: $playerChip")
+        view.showBackTop()
+        view.showNextGame()
+    }
+
 }

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import com.example.dell.blackjack.domain.Hand
 import com.example.dell.blackjack.domain.Judge
@@ -22,29 +23,20 @@ import org.jetbrains.anko.*
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    override fun removeAllCardZone() {
-        handZone.removeAllViews()
-        dealerZone.removeAllViews()
-    }
-
-    override fun showSocView() {
-        socView.visibility = View.VISIBLE
-    }
-
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, handZone, dealerZone
-        )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
         if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
         val blackJack = BlackJackGame(this,
-                layout, loadChip(this.applicationContext), betChip, applicationContext)
+                loadChip(this.applicationContext),
+                betChip,
+                applicationContext)
 
         blackJack.gameInit()
 
@@ -258,6 +250,15 @@ class MainActivity : AppCompatActivity(), MainView {
         handZone.addCard(hand)
     }
 
+    override fun addDealerCards(hands: List<Hand>) {
+        hands.forEach { addDealerCard(it) }
+    }
+
+    override fun addPlayerCards(hands: List<Hand>) {
+        hands.forEach { addPlayerCard(it) }
+    }
+
+
     @SuppressLint("RtlHardcoded")
     private fun LinearLayout.addCard(hand: Hand) {
         val backGroundColor = if (hand.isHide) {
@@ -285,6 +286,28 @@ class MainActivity : AppCompatActivity(), MainView {
             }
         }
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun showAllDealerHand(dealerHands: MutableList<Hand>) {
+        dealerZone.forEachChildWithIndex { index, view ->
+            if (view is TextView) {
+                val hand = dealerHands[index]
+                if (view.text.isEmpty()) {
+                    view.backgroundColor = Color.parseColor(CARDF)
+                    view.text = "${hand.suit}\n${hand.num}"
+                }
+            }
+        }
+    }
+
+    override fun removeAllCardZone() {
+        handZone.removeAllViews()
+        dealerZone.removeAllViews()
+    }
+
+    override fun showSocView() {
+        socView.visibility = View.VISIBLE
     }
 
 
