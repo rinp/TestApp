@@ -26,10 +26,10 @@ class BlackJackGame(
         val card = deck.dealCard()
         val handCard = you.addCard(card)
 
-        gl.showUserHand(handCard)
+        view.addPlayerCard(handCard)
 
         val score: Score = you.score
-        gl.view.setPlayerScore(score)
+        view.setPlayerScore(score)
 
         view.setDeckCount(deck.remainingCardCount())
         val pCS = you.score
@@ -106,8 +106,7 @@ class BlackJackGame(
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
         //場のカード情報の削除
-        gl.userZone.removeAllViews()
-        gl.dealerZone.removeAllViews()
+        view.removeAllCardZone()
 
         view.setResult("")
 
@@ -116,7 +115,7 @@ class BlackJackGame(
 
         //残りチップの判定
         if (you.chip < betChip) {
-            gl.socView.visibility = View.VISIBLE
+            view.showSocView()
         }
 
         if (status == 0) {

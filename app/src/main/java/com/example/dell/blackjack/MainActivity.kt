@@ -2,10 +2,14 @@ package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
+import com.example.dell.blackjack.domain.Hand
 import com.example.dell.blackjack.domain.Judge
 import com.example.dell.blackjack.domain.Score
 import com.example.dell.blackjack.domain.toChip
@@ -14,22 +18,33 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.*
 
 class MainActivity : AppCompatActivity(), MainView {
+
+    override fun removeAllCardZone() {
+        handZone.removeAllViews()
+        dealerZone.removeAllViews()
+    }
+
+    override fun showSocView() {
+        socView.visibility = View.VISIBLE
+    }
 
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, handZone, dealerZone,  socView
+        val layout = GameLayout(this, handZone, dealerZone
         )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
         if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
-        val blackJack = BlackJackGame(this, layout, loadChip(this.applicationContext), betChip, applicationContext)
+        val blackJack = BlackJackGame(this,
+                layout, loadChip(this.applicationContext), betChip, applicationContext)
 
         blackJack.gameInit()
 
@@ -233,6 +248,43 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun showBackTop() {
         backTop1.visibility = View.VISIBLE
+    }
+
+    override fun addDealerCard(hand: Hand) {
+        dealerZone.addCard(hand)
+    }
+
+    override fun addPlayerCard(hand: Hand) {
+        handZone.addCard(hand)
+    }
+
+    @SuppressLint("RtlHardcoded")
+    private fun LinearLayout.addCard(hand: Hand) {
+        val backGroundColor = if (hand.isHide) {
+            Color.parseColor(CARDB)
+        } else {
+            Color.parseColor(CARDF)
+        }
+        val showText = if (hand.isHide) {
+            ""
+        } else {
+            "${hand.suit}\n${hand.num}"
+        }
+
+        this.linearLayout {
+            textView {
+                text = showText
+                gravity = Gravity.LEFT
+                backgroundColor = backGroundColor
+            }.lparams(width = this.width) {
+                width = dip(CARDW)
+                height = dip(CARDH)
+                gravity = Gravity.LEFT
+                horizontalMargin = dip(5)
+                verticalMargin = dip(5)
+            }
+        }
+
     }
 
 
