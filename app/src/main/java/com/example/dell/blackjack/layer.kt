@@ -22,7 +22,6 @@ data class GameLayout(
         val dealerCS: TextView,
         val userZone: LinearLayout,
         val dealerZone: LinearLayout,
-        val stand: Button,
         val result: TextView,
         val nextGame: Button,
         val backTop1: Button,
@@ -48,25 +47,6 @@ data class GameLayout(
         if (view.id == R.id.endsCards) {
             view.text = deck.remainingCardCount()
         }
-    }
-
-    /*処理*/
-//キャプションのセット
-    @SuppressLint("SetTextI18n")
-    fun setCaption() {
-        caption00.text =
-                """
-    |【RANK】
-    | Ace :1or11
-    | Jack,Queen,King:10
-    | else:ownNumber
-    |
-    |【Rate】
-    | Win(BJ):×${Judge.BJ_WIN.dividendPercent}
-    | Win:×${Judge.WIN.dividendPercent}
-    | PUSH:×${Judge.PUSH.dividendPercent}
-    | LOSE:×${Judge.LOSE.dividendPercent}
-""".trimMargin()
     }
 
     @SuppressLint("SetTextI18n")

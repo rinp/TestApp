@@ -9,5 +9,8 @@ interface MainView {
     fun renameHitBtn(text: String)
     fun renameBetChip(text: String)
     fun renameOwnChip(text: String)
+    fun setCaption()
+    fun disabledStand()
+    fun enableStand()
 
 }

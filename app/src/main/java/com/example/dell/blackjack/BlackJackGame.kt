@@ -47,7 +47,7 @@ class BlackJackGame(
     }
 
     fun stand() {
-        gl.stand.isEnabled = false
+        view.disabledStand()
         view.disabledHit()
         //結果
         dealerTurn()
@@ -69,7 +69,6 @@ class BlackJackGame(
         Log.d("game", "ディーラースコア${dealer.score}")
 
         view.disabledHit()
-        gl.stand.isEnabled = false
 
         val dealerHands = dealer.openHand()
         gl.resetShowDealerHands(dealerHands)
@@ -112,7 +111,6 @@ class BlackJackGame(
 
         // 文字列まで変更されているのか？
         view.renameHitBtn("hit")
-        gl.stand.text = "stand"
 
         //残りチップの判定
         if (you.chip < betChip) {
@@ -120,7 +118,7 @@ class BlackJackGame(
         }
 
         if (status == 0) {
-            gl.setCaption()
+            view.setCaption()
             deck.init()
         }
 
@@ -140,7 +138,7 @@ class BlackJackGame(
         gl.countCards(gl.endsCards, deck)
         //ボタンの活性化
         view.enableHit()
-        gl.stand.isEnabled = true
+        view.enableStand()
         //自身のチップデータの読みこみ
         val chip = loadChip(gl.applicationContext)
         ////仮置きtest(最低限のベットを行う)

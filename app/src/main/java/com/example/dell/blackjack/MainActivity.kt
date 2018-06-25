@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.example.dell.blackjack.domain.Deck
+import com.example.dell.blackjack.domain.Judge
 import com.example.dell.blackjack.domain.toChip
 import com.example.dell.blackjack.presentation.MainView
 import com.google.android.gms.ads.AdListener
@@ -21,9 +22,8 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, stand, result, nextGame,
-                backTop1, this.applicationContext, endsCards,
-                socView,
+        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, result, nextGame, backTop1,
+                this.applicationContext, endsCards, socView,
                 caption00
         )
 
@@ -154,14 +154,43 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun enableHit() {
         hit.isEnabled = true
     }
-    override fun renameHitBtn(text:String){
+
+    override fun renameHitBtn(text: String) {
         hit.text = text
     }
+
     override fun renameBetChip(text: String) {
         bet.text = text
     }
+
     override fun renameOwnChip(text: String) {
         ownChip.text = text
     }
+
+    @SuppressLint("SetTextI18n")
+    override fun setCaption() {
+        caption00.text =
+                """
+    |【RANK】
+    | Ace :1or11
+    | Jack,Queen,King:10
+    | else:ownNumber
+    |
+    |【Rate】
+    | Win(BJ):×${Judge.BJ_WIN.dividendPercent}
+    | Win:×${Judge.WIN.dividendPercent}
+    | PUSH:×${Judge.PUSH.dividendPercent}
+    | LOSE:×${Judge.LOSE.dividendPercent}
+""".trimMargin()
+
+    }
+    override fun disabledStand() {
+        stand.isEnabled = false
+    }
+    override fun enableStand() {
+        stand.isEnabled = true
+    }
+
+
 
 }
