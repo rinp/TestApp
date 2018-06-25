@@ -17,7 +17,6 @@ data class GameLayout(
         val view: MainView,
         val userZone: LinearLayout,
         val dealerZone: LinearLayout,
-        val applicationContext: Context,
         val socView: LinearLayout
 ) {
 

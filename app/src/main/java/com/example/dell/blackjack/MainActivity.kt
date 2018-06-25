@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, handZone, dealerZone, this.applicationContext, socView
+        val layout = GameLayout(this, handZone, dealerZone,  socView
         )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()

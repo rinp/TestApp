@@ -144,7 +144,7 @@ class BlackJackGame(
         view.enableHit()
         view.enableStand()
         //自身のチップデータの読みこみ
-        val chip = loadChip(gl.applicationContext)
+        val chip = loadChip(applicationContext)
         ////仮置きtest(最低限のベットを行う)
         //player.setBet(BET1)
         //情報の画面表示
