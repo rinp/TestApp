@@ -1,6 +1,8 @@
 package com.example.dell.blackjack
 
 import android.widget.LinearLayout
+import com.example.dell.blackjack.domain.Hand
+import com.example.dell.blackjack.domain.Trump
 import org.junit.Assert
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is` as cis

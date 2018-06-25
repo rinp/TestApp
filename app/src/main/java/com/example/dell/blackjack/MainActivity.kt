@@ -4,33 +4,34 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.dell.blackjack.domain.Deck
 import com.example.dell.blackjack.domain.toChip
+import com.example.dell.blackjack.presentation.MainView
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainView {
 
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(hit, playerCS, dealerCS, handZone, dealerZone, stand, result,
-                ownChip, nextGame, backTop1,
-                this.applicationContext,
-                endsCards, socView, caption00, bet
+        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, stand, result, ownChip,
+                nextGame, backTop1, this.applicationContext,
+                endsCards,
+                socView, caption00, bet
         )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
         if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
-        val blackJack = BlackJackGame(layout, loadChip(this.applicationContext), betChip, applicationContext)
+        val blackJack = BlackJackGame(this, layout, loadChip(this.applicationContext), betChip, applicationContext)
 
         blackJack.gameInit()
 
@@ -51,9 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         //次のゲームを始める
         nextGame.setOnClickListener {
-            Log.d("main", "next click start")
             blackJack.nextGame()
-            Log.d("main", "next click end")
         }
 
         //TOPに戻る
@@ -81,6 +80,13 @@ class MainActivity : AppCompatActivity() {
 
         //広告
         ad02.loadAd(AdRequest.Builder().build())
+    }
+
+
+    //トランプセットの残り枚数を更新する
+    @SuppressLint("SetTextI18n")
+    override fun countCards(deck: Deck) {
+        endsCards.text = deck.remainingCardCount()
     }
 
     /**
@@ -139,5 +145,18 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
     ////////////////////////////////////////////////////////////////////
+    override fun disabledHit() {
+        hit.isEnabled = false
+    }
+
+    override fun enableHit() {
+        hit.isEnabled = true
+    }
+    override fun renameHitBtn(text:String){
+        hit.text = text
+    }
+
+
 }

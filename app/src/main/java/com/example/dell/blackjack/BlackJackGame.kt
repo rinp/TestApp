@@ -5,14 +5,17 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import com.example.dell.blackjack.domain.*
+import com.example.dell.blackjack.presentation.MainView
 
 ////カードルール
 private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数
 
-class BlackJackGame(private val gl: GameLayout,
-                    playerChip: Chip,
-                    private val betChip: Chip,
-                    private val applicationContext: Context
+class BlackJackGame(
+        private val view: MainView,
+        private val gl: GameLayout,
+        playerChip: Chip,
+        private val betChip: Chip,
+        private val applicationContext: Context
 ) {
 
     val dealer = Dealer()
@@ -32,7 +35,8 @@ class BlackJackGame(private val gl: GameLayout,
 
         //ブラックジャックの時はhitを止める(standを押させる)
         if (pCS === Score.BlackJack) {
-            gl.hit.isEnabled = false
+            view.disabledHit()
+            view.disabledHit()
             return
         }
 
@@ -44,7 +48,7 @@ class BlackJackGame(private val gl: GameLayout,
 
     fun stand() {
         gl.stand.isEnabled = false
-        gl.hit.isEnabled = false
+        view.disabledHit()
         //結果
         dealerTurn()
         gl.result.text = issue().output
@@ -64,7 +68,7 @@ class BlackJackGame(private val gl: GameLayout,
         Log.d("game", "ディーラーターン開始")
         Log.d("game", "ディーラースコア${dealer.score}")
 
-        gl.hit.isEnabled = false
+        view.disabledHit()
         gl.stand.isEnabled = false
 
         val dealerHands = dealer.openHand()
@@ -107,7 +111,7 @@ class BlackJackGame(private val gl: GameLayout,
         gl.result.text = ""
 
         // 文字列まで変更されているのか？
-        gl.hit.text = "hit"
+        view.renameHitBtn("hit")
         gl.stand.text = "stand"
 
         //残りチップの判定
@@ -135,7 +139,7 @@ class BlackJackGame(private val gl: GameLayout,
         //山札の残り
         gl.countCards(gl.endsCards, deck)
         //ボタンの活性化
-        gl.hit.isEnabled = true
+        view.enableHit()
         gl.stand.isEnabled = true
         //自身のチップデータの読みこみ
         val chip = loadChip(gl.applicationContext)
@@ -150,8 +154,8 @@ class BlackJackGame(private val gl: GameLayout,
 
         if (playerFstScore === Score.BlackJack) {
             //プレイヤー初回BJなら即勝負を掛けれるようにしとく(なくても良いやつ？)
-            gl.hit.isEnabled = false
-            gl.hit.text = "BJ"
+            view.disabledHit()
+            view.renameHitBtn("BJ")
         }
         if (dealerFstScore === Score.BlackJack) {
             //ディーラーBJだと強制勝負
@@ -162,8 +166,8 @@ class BlackJackGame(private val gl: GameLayout,
             gl.calcUserCardScore(you, gl.playerCS)
 //            you.printScore(gl.playerCS)
             //プレイヤーの操作は不可
-            gl.hit.isEnabled = false
-            gl.hit.text = "BJ"
+            view.disabledHit()
+            view.renameHitBtn("BJ")
         }
         Log.d("game", "zoneReset end")
     }

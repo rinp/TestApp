@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.dell.blackjack.domain.*
+import com.example.dell.blackjack.presentation.MainView
 import org.jetbrains.anko.*
 
 // 最終的にはMainActivityに戻ることになる。
@@ -16,7 +17,7 @@ import org.jetbrains.anko.*
 // RxAndroidの利用？
 
 data class GameLayout(
-        val hit: Button,
+        val view: MainView,
         val playerCS: TextView,
         val dealerCS: TextView,
         val userZone: LinearLayout,
@@ -32,6 +33,7 @@ data class GameLayout(
         val caption00: TextView,
         val bet: TextView
 ) {
+
     /**
      * 次のゲームを始める
      */
