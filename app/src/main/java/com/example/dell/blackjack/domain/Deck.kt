@@ -38,6 +38,6 @@ data class Deck(private val deckCount: Int = 2) {
         return cards[i++]
     }
 
-    fun remainingCardCount() = "count:${cards.count() - i}"
+    fun remainingCardCount() = cards.count() - i
 
 }

@@ -28,9 +28,10 @@ class BlackJackGame(
 
         gl.showUserHand(handCard)
 
-        gl.calcUserCardScore(you, gl.playerCS)
+        val score: Score = you.score
+        gl.view.setPlayerScore(score)
 
-        gl.countCards(gl.endsCards, deck)
+        view.setDeckCount(deck.remainingCardCount())
         val pCS = you.score
 
         //ブラックジャックの時はhitを止める(standを押させる)
@@ -51,7 +52,7 @@ class BlackJackGame(
         view.disabledHit()
         //結果
         dealerTurn()
-        gl.result.text = issue().output
+        view.setResult(issue().output)
 
         gl.nextSet(you.chip)
     }
@@ -59,8 +60,8 @@ class BlackJackGame(
     fun nextGame() {
         Log.d("game", "nextGame in")
         zoneReset(1)
-        gl.nextGame.visibility = View.GONE
-        gl.backTop1.visibility = View.GONE
+        view.hideNextGame()
+        view.hideBackTop()
         Log.d("game", "nextGame end")
     }
 
@@ -77,7 +78,8 @@ class BlackJackGame(
         while (dealerScore < DEALER_STOP_SCR) {
             val hand = dealer.addCard(deck.dealCard())
             gl.showDealerHand(hand)
-            gl.calcDealerCardScore(dealer, gl.dealerCS)
+            val score: Score = dealer.score
+            gl.view.setDealerScore(score)
             dealerScore = dealer.score.num
         }
         turnEnd()
@@ -86,7 +88,7 @@ class BlackJackGame(
     private fun turnEnd() {
         val issue = issue()
 
-        gl.result.text = issue.output
+        view.setResult(issue.output)
         moveChip(issue)
 
         gl.nextSet(you.chip)
@@ -107,7 +109,7 @@ class BlackJackGame(
         gl.userZone.removeAllViews()
         gl.dealerZone.removeAllViews()
 
-        gl.result.text = ""
+        view.setResult("")
 
         // 文字列まで変更されているのか？
         view.renameHitBtn("hit")
@@ -131,11 +133,13 @@ class BlackJackGame(
         gl.showDealerHands(dealerHands)
 
         //合計値の表示
-        gl.calcUserCardScore(you, gl.playerCS)
-        gl.calcDealerCardScore(dealer, gl.dealerCS)
+        val score: Score = you.score
+        gl.view.setPlayerScore(score)
+        val score1: Score = dealer.score
+        gl.view.setDealerScore(score1)
 
         //山札の残り
-        gl.countCards(gl.endsCards, deck)
+        view.setDeckCount(deck.remainingCardCount())
         //ボタンの活性化
         view.enableHit()
         view.enableStand()
@@ -161,9 +165,10 @@ class BlackJackGame(
             val dealerHands2 = dealer.openHand()
             gl.resetShowDealerHands(dealerHands2)
 
-            gl.dealerCS.text = "Dealer:$BLACK_JACK_NUM <BJ>"
-            gl.calcUserCardScore(you, gl.playerCS)
-//            you.printScore(gl.playerCS)
+            view.setDealerScore(dealer.score)
+            val score1: Score = you.score
+            gl.view.setPlayerScore(score1)
+            //            you.printScore(gl.playerCS)
             //プレイヤーの操作は不可
             view.disabledHit()
             view.renameHitBtn("BJ")

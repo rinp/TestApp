@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import com.example.dell.blackjack.domain.Deck
 import com.example.dell.blackjack.domain.Judge
+import com.example.dell.blackjack.domain.Score
 import com.example.dell.blackjack.domain.toChip
 import com.example.dell.blackjack.presentation.MainView
 import com.google.android.gms.ads.AdListener
@@ -22,9 +22,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val layout = GameLayout(this, playerCS, dealerCS, handZone, dealerZone, result, nextGame, backTop1,
-                this.applicationContext, endsCards, socView,
-                caption00
+        val layout = GameLayout(this, handZone, dealerZone, this.applicationContext, socView
         )
 
         val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
@@ -82,12 +80,12 @@ class MainActivity : AppCompatActivity(), MainView {
         ad02.loadAd(AdRequest.Builder().build())
     }
 
-
-    //トランプセットの残り枚数を更新する
-    @SuppressLint("SetTextI18n")
-    override fun countCards(deck: Deck) {
-        endsCards.text = deck.remainingCardCount()
-    }
+//
+//    //トランプセットの残り枚数を更新する
+//    @SuppressLint("SetTextI18n")
+//    override fun countCards(deck: Deck) {
+//        setDeckCount(deck.remainingCardCount())
+//    }
 
     /**
      *
@@ -184,13 +182,58 @@ class MainActivity : AppCompatActivity(), MainView {
 """.trimMargin()
 
     }
+
     override fun disabledStand() {
         stand.isEnabled = false
     }
+
     override fun enableStand() {
         stand.isEnabled = true
     }
 
+    override fun setDealerScore(score: Score) {
+        setScore(score, "Dealer")
+    }
+
+    override fun setPlayerScore(score: Score) {
+        setScore(score, "User")
+    }
+
+    private fun setScore(score: Score, name: String) {
+        val cc: Int = score.num
+
+        playerCS.text = when {
+            score === Score.BlackJack -> "$name:$cc <BJ>"
+            score is Score.Bust -> "$name:$cc <Bust>"
+            else -> "$name:$cc"
+        }
+
+    }
+
+    override fun setResult(text: String) {
+        result.text = text
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun setDeckCount(count: Int) {
+        endsCards.text = "count:$count"
+    }
+
+    override fun hideNextGame() {
+        nextGame.visibility = View.GONE
+    }
+
+    override fun showNextGame() {
+        nextGame.visibility = View.VISIBLE
+    }
+
+    override fun hideBackTop() {
+        backTop1.visibility = View.GONE
+    }
+
+    override fun showBackTop() {
+        backTop1.visibility = View.VISIBLE
+    }
 
 
 }

@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
-import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.example.dell.blackjack.domain.*
 import com.example.dell.blackjack.presentation.MainView
 import org.jetbrains.anko.*
@@ -18,17 +15,10 @@ import org.jetbrains.anko.*
 
 data class GameLayout(
         val view: MainView,
-        val playerCS: TextView,
-        val dealerCS: TextView,
         val userZone: LinearLayout,
         val dealerZone: LinearLayout,
-        val result: TextView,
-        val nextGame: Button,
-        val backTop1: Button,
         val applicationContext: Context,
-        val endsCards: TextView,
-        val socView: LinearLayout,
-        val caption00: TextView
+        val socView: LinearLayout
 ) {
 
     /**
@@ -37,16 +27,8 @@ data class GameLayout(
     @SuppressLint("SetTextI18n")
     fun nextSet(playerChip: Chip) {
         view.renameOwnChip("chip: $playerChip")
-        nextGame.visibility = View.VISIBLE
-        backTop1.visibility = View.VISIBLE
-    }
-
-    //トランプセットの残り枚数を更新する
-    @SuppressLint("SetTextI18n")
-    fun countCards(view: TextView, deck: Deck) {
-        if (view.id == R.id.endsCards) {
-            view.text = deck.remainingCardCount()
-        }
+        view.showBackTop()
+        view.showNextGame()
     }
 
     @SuppressLint("SetTextI18n")
@@ -98,36 +80,6 @@ data class GameLayout(
     fun resetShowDealerHands(dealerHands: MutableList<Hand>) {
         dealerZone.removeAllViewsInLayout()
         showDealerHands(dealerHands)
-    }
-
-    //スコアに対しての画面書き込みを行う
-    @SuppressLint("SetTextI18n")
-    fun calcUserCardScore(user: User, write: TextView): Score {
-        val score: Score = user.score
-        val cc: Int = score.num
-
-        write.text = "User:$cc"
-        if (score === Score.BlackJack) {
-            write.text = "User:$cc <Bust>"
-        } else if (score === Score.BlackJack) {
-            write.text = "User:$cc <BJ>"
-        }
-        return score
-    }
-
-    //スコアに対しての画面書き込みを行う
-    @SuppressLint("SetTextI18n")
-    fun calcDealerCardScore(dealer: Dealer, write: TextView): Score {
-        val score: Score = dealer.score
-        val cc: Int = score.num
-
-        write.text = "Dealer:$cc"
-        if (score is Score.Bust) {
-            write.text = "Dealer:$cc <Bust>"
-        } else if (score === Score.BlackJack) {
-            write.text = "Dealer:$cc <BJ>"
-        }
-        return score
     }
 
 }
