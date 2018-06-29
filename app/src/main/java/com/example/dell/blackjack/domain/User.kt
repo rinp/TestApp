@@ -1,23 +1,17 @@
 package com.example.dell.blackjack.domain
 
-class User(playerChip: Chip) : Player {
-    var hand = mutableListOf<Hand>() //手札(プレイヤー)
-    lateinit var score: Score
-        private set
+class User : Player {
 
-    var chip = playerChip
-        internal set
+    override var hand = mutableListOf<Hand>()
 
-    fun addCard(trump: Trump): Hand {
-        val handCard = addCard(hand, trump)
-        score = calcScore(hand)
-        return handCard
+    lateinit var chip: Chip
+
+    fun addCard(trump: Trump) {
+        addCard(hand, trump)
     }
 
-    fun makeHand(deck: Deck): MutableList<Hand> {
+    fun makeHand(deck: Deck) {
         makeHand(hand, true, deck)
-        score = calcScore(hand)
-        return hand
     }
 
 }

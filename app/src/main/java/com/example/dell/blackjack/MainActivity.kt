@@ -1,6 +1,7 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -10,18 +11,17 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.dell.blackjack.domain.Hand
-import com.example.dell.blackjack.domain.Judge
-import com.example.dell.blackjack.domain.Score
-import com.example.dell.blackjack.domain.toChip
+import com.example.dell.blackjack.domain.*
 import com.example.dell.blackjack.presentation.MainView
+import com.example.dell.blackjack.userCase.MainUseCase
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 
-class MainActivity : AppCompatActivity(), MainView {
+
+class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, InterstitialAdModel {
 
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
@@ -33,12 +33,17 @@ class MainActivity : AppCompatActivity(), MainView {
         if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
-        val blackJack = BlackJackGame(this,
-                loadChip(this.applicationContext),
-                betChip,
-                applicationContext)
+        val presenter = MainPresenter(this,
+                MainUseCase(
+                        this,
+                        betChip,
+                        Deck(),
+                        Dealer(),
+                        User()
+                )
+        )
 
-        blackJack.gameInit()
+        presenter.onCreate()
 
         //インテンション広告の生成
         interstitialAd = newInterstitialAd()
@@ -46,18 +51,18 @@ class MainActivity : AppCompatActivity(), MainView {
 
         //カードを引く
         hit.setOnClickListener {
-            blackJack.hit()
+            presenter.hit()
         }
 
         //今の持ち札で対戦
         stand.setOnClickListener {
-            blackJack.stand()
+            presenter.stand()
         }
 
 
         //次のゲームを始める
         nextGame.setOnClickListener {
-            blackJack.nextGame()
+            presenter.nextGame()
         }
 
         //TOPに戻る
@@ -164,12 +169,14 @@ class MainActivity : AppCompatActivity(), MainView {
         hit.text = text
     }
 
-    override fun renameBetChip(text: String) {
-        bet.text = text
+    @SuppressLint("SetTextI18n")
+    override fun renameBetChip(chip: Chip) {
+        bet.text = "bet: $chip"
     }
 
-    override fun renameOwnChip(text: String) {
-        ownChip.text = text
+    @SuppressLint("SetTextI18n")
+    override fun setUserChip(chip: Chip) {
+        ownChip.text = "chip: $chip"
     }
 
     @SuppressLint("SetTextI18n")
@@ -217,9 +224,14 @@ class MainActivity : AppCompatActivity(), MainView {
 
     }
 
-    override fun setResult(text: String) {
-        result.text = text
+    override fun setResult(judge: Judge) {
+        result.text = judge.output
     }
+
+    override fun removeResult() {
+        result.text = ""
+    }
+
 
     @SuppressLint("SetTextI18n")
     override fun setDeckCount(count: Int) {
@@ -256,6 +268,19 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun addPlayerCards(hands: List<Hand>) {
         hands.forEach { addPlayerCard(it) }
+    }
+
+
+    override fun showUserHand(hands: List<Hand>) {
+        if (handZone.childCount < hands.size) {
+            addPlayerCards(hands.subList(handZone.childCount, hands.size))
+        }
+    }
+
+    override fun showDealerHand(hands: List<Hand>) {
+        if (dealerZone.childCount < hands.size) {
+            addPlayerCards(hands.subList(handZone.childCount, hands.size))
+        }
     }
 
 
@@ -301,6 +326,7 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
+
     override fun removeAllCardZone() {
         handZone.removeAllViews()
         dealerZone.removeAllViews()
@@ -310,5 +336,9 @@ class MainActivity : AppCompatActivity(), MainView {
         socView.visibility = View.VISIBLE
     }
 
+    override val appContext: Context
+        get() = this.applicationContext
+
 
 }
+

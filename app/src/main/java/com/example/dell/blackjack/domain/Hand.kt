@@ -6,7 +6,7 @@ package com.example.dell.blackjack.domain
  * @Trump カードの情報
  * @isHide 裏表
  */
-class Hand(val trump: Trump, var isHide: Boolean) : Trump by trump {
+data class Hand(val trump: Trump, var isHide: Boolean) : Trump by trump {
 
     fun open() {
         this.isHide = false

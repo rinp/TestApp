@@ -1,6 +1,7 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -8,12 +9,16 @@ import android.os.Handler
 import android.view.View
 import com.example.dell.blackjack.domain.Chip
 import com.example.dell.blackjack.domain.toChip
+import com.example.dell.blackjack.presentation.StartView
 import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.activity_start.*
+import org.jetbrains.anko.intentFor
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StartMenu : AppCompatActivity() {
+class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
+    override val appContext: Context
+        get() = this.applicationContext
 
     companion object {
         private val BET1: Chip = 500.toChip() //ベット1
@@ -24,7 +29,6 @@ class StartMenu : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
-        val gameView = Intent(this, MainActivity::class.java)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
@@ -50,7 +54,7 @@ class StartMenu : AppCompatActivity() {
         addChipView.setOnClickListener {}
         backToMenu.setOnClickListener {
             //チップ初期化
-            setChip(this.applicationContext, FIRSTCHIP)
+            setChip(FIRSTCHIP)
             backToMenu.visibility = View.GONE
             timerRunningView.visibility = View.VISIBLE
             addChipView.visibility = View.GONE
@@ -59,49 +63,40 @@ class StartMenu : AppCompatActivity() {
 
         //各BET
         start500Bet.setOnClickListener {
-            gameView.putExtra("BET_CHIP", BET1)
+            startActivity(intentFor<MainActivity>("BET_CHIP" to BET1))
             finish()
-            startActivity(gameView)
         }
         start1000Bet.setOnClickListener {
-            gameView.putExtra("BET_CHIP", BET2)
+            startActivity(intentFor<MainActivity>("BET_CHIP" to BET2))
             finish()
-            startActivity(gameView)
         }
         start5000Bet.setOnClickListener {
-            gameView.putExtra("BET_CHIP", BET3)
+            startActivity(intentFor<MainActivity>("BET_CHIP" to BET3))
             finish()
-            startActivity(gameView)
         }
 
 
 ////////test用////////
-        ////ゲーム画面へ遷移////
-        debagStart.setOnClickListener {
-            finish()
-//            val intent = Intent(this,MainActivity::class.java)
-            startActivity(gameView)
-        }
         ////////////////
         ////chipを1,000,000にする
         debagChipEq1M.setOnClickListener {
             //自身のチップデータの読みこみ
-            setChip(this.applicationContext, DEBAGMANYCHIP)
+            setChip(DEBAGMANYCHIP)
             startPrcs()
         }
         ////chipの格納されたプリファレンスを空にする
         debagChipClear.setOnClickListener {
-            val chip = loadChip(this.applicationContext)
+            val chip = loadChip()
             if (chip.notEmpty()) {
-                removePref(this.applicationContext)
+                removePref()
             }
             startPrcs()
         }
         ////チップを0にする
         debagChipEq0.setOnClickListener {
-            val chip = loadChip(this.applicationContext)
+            val chip = loadChip()
             if (chip.notEmpty()) {
-                setChip(this.applicationContext, 0)
+                setChip(0)
             }
             startPrcs()
         }
@@ -140,12 +135,12 @@ class StartMenu : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun startPrcs() {
         //自身のチップデータの読みこみ
-        var chip = loadChip(this.applicationContext)
+        var chip = loadChip()
 
         //プリファレンスがないときは初期値を入れる
         if (chip.isEmpty()) {
-            setChip(this.applicationContext, FIRSTCHIP)
-            chip = loadChip(this.applicationContext)
+            setChip(FIRSTCHIP)
+            chip = loadChip()
         }
 
         //チップ所持数で掛けられるBETの処理

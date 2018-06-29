@@ -3,26 +3,30 @@ package com.example.dell.blackjack.domain
 import android.util.Log
 
 class Dealer : Player {
-    var hand = mutableListOf<Hand>() //手札
-    lateinit var score: Score
-        private set
+    override var hand = mutableListOf<Hand>() //手札
 
-    fun addCard(trump: Trump): Hand {
-        val addCard = addCard(hand, trump)
-        score = calcScore(hand)
+    val firstScore: Score
+        get() = calcScore(hand.map { it.copy().apply { this.open() } })
+
+    fun addCard(trump: Trump) {
+        addCard(hand, trump)
         Log.d("game", "ディーラースコア${this.score}")
-        return addCard
     }
 
-    fun makeHand(deck: Deck): MutableList<Hand> {
+    fun makeHand(deck: Deck) {
         makeHand(hand, false, deck)
-        score = calcScore(hand)
-        return hand
     }
 
-    fun openHand(): MutableList<Hand> {
+    fun openHand() {
         hand.forEach { it.open() }
-        score = calcScore(hand)
-        return hand
     }
+
+
+    fun isDealerStopScore(): Boolean {
+        return DEALER_STOP_SCR <= this.score.num
+    }
+
 }
+
+////カードルール
+private const val DEALER_STOP_SCR: Int = 17 //ディーラーがこれ以上カードを引かなくなる数

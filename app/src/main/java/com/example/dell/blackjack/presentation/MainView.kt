@@ -1,6 +1,8 @@
 package com.example.dell.blackjack.presentation
 
+import com.example.dell.blackjack.domain.Chip
 import com.example.dell.blackjack.domain.Hand
+import com.example.dell.blackjack.domain.Judge
 import com.example.dell.blackjack.domain.Score
 
 interface MainView {
@@ -9,13 +11,13 @@ interface MainView {
 
     fun enableHit()
     fun renameHitBtn(text: String)
-    fun renameBetChip(text: String)
-    fun renameOwnChip(text: String)
+    fun renameBetChip(chip: Chip)
+    fun setUserChip(chip: Chip)
     fun setCaption()
     fun disabledStand()
     fun enableStand()
     fun setDeckCount(count: Int)
-    fun setResult(text: String)
+    fun setResult(judge: Judge)
     fun setPlayerScore(score: Score)
     fun setDealerScore(score: Score)
     fun hideNextGame()
@@ -29,5 +31,8 @@ interface MainView {
     fun addDealerCards(hands: List<Hand>)
     fun addPlayerCards(hands: List<Hand>)
     fun showAllDealerHand(dealerHands: MutableList<Hand>)
+    fun showUserHand(hands: List<Hand>)
+    fun showDealerHand(hands: List<Hand>)
+    fun removeResult()
 
 }

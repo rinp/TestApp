@@ -149,15 +149,6 @@
                         android:visibility="visible">
 
                         <Button
-                            android:id="@+id/debagStart"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="20"
-                            android:text="test:gameView"
-                            tools:layout_editor_absoluteX="148dp"
-                            tools:layout_editor_absoluteY="400dp" />
-
-                        <Button
                             android:id="@+id/debagChipEq1M"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

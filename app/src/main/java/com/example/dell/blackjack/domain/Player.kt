@@ -11,20 +11,30 @@ interface Player {
 
     //手札にカードを追加する
     @SuppressLint("SetTextI18n", "RtlHardcoded")
-    fun addCard(user: MutableList<Hand>, trump: Trump): Hand {
+    fun addCard(hands: MutableList<Hand>, trump: Trump) {
         val card = Hand(trump = trump, isHide = false)
-        user += card
-        return card
+        hands += card
     }
+
+    var hand: MutableList<Hand>
+
+    val score: Score
+        get() = calcScore(hand)
 
     //スコア計算
     fun calcScore(hands: List<Hand>): Score {
-        /*定数*/
 
-        val reduce: List<Int> = hands.map { it.point() }.reduceRight { list, acc -> list.flatMap { num -> acc.map { it + num } } }
+        val reduce: List<Int> = hands
+                .map { it.point() }
+                .reduceRight { list, acc ->
+                    list.flatMap { num ->
+                        acc.map { it + num }
+                    }
+                }
 
-        if (BLACK_JACK_NUM < reduce.min()!!) {
-            return Score.Bust(reduce.min()!!)
+        val minScore = reduce.min()!!
+        if (BLACK_JACK_NUM < minScore) {
+            return Score.Bust(minScore)
         }
 
         if (hands.size == 2 && reduce.any { it == BLACK_JACK_NUM }) {
@@ -42,13 +52,9 @@ interface Player {
     @SuppressLint("SetTextI18n", "RtlHardcoded")
     fun makeHand(user: MutableList<Hand>, playerFlg: Boolean, deck: Deck) {
         user.clear()
-        var score = 0
         for (i in 1..HAND_NUM) {
             val trump = deck.dealCard()
-            score += trump.num
             user += Hand(trump = trump, isHide = i > 1 && !playerFlg)
         }
     }
-
-
 }
