@@ -9,16 +9,13 @@ import android.os.Handler
 import android.view.View
 import com.example.dell.blackjack.domain.Chip
 import com.example.dell.blackjack.domain.toChip
-import com.example.dell.blackjack.presentation.StartView
 import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.activity_start.*
 import org.jetbrains.anko.intentFor
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
-    override val appContext: Context
-        get() = this.applicationContext
+class StartMenu : UserChipPref() {
 
     companion object {
         private val BET1: Chip = 500.toChip() //ベット1
@@ -54,7 +51,7 @@ class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
         addChipView.setOnClickListener {}
         backToMenu.setOnClickListener {
             //チップ初期化
-            setChip(FIRSTCHIP)
+            saveChip(FIRSTCHIP)
             backToMenu.visibility = View.GONE
             timerRunningView.visibility = View.VISIBLE
             addChipView.visibility = View.GONE
@@ -81,7 +78,7 @@ class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
         ////chipを1,000,000にする
         debagChipEq1M.setOnClickListener {
             //自身のチップデータの読みこみ
-            setChip(DEBAGMANYCHIP)
+            saveChip(DEBAGMANYCHIP)
             startPrcs()
         }
         ////chipの格納されたプリファレンスを空にする
@@ -96,7 +93,7 @@ class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
         debagChipEq0.setOnClickListener {
             val chip = loadChip()
             if (chip.notEmpty()) {
-                setChip(0)
+                saveChip(0)
             }
             startPrcs()
         }
@@ -139,7 +136,7 @@ class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
 
         //プリファレンスがないときは初期値を入れる
         if (chip.isEmpty()) {
-            setChip(FIRSTCHIP)
+            saveChip(FIRSTCHIP)
             chip = loadChip()
         }
 
@@ -172,8 +169,4 @@ class StartMenu : AppCompatActivity(), AbstractPreferencesModel {
         //TODO 用途確認
         nowChipStartMenu.text = chip.toString()
     }
-}
-
-private fun Intent.putExtra(name: String, value: Chip) {
-    this.putExtra(name, value.num)
 }

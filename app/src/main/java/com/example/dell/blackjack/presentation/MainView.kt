@@ -30,7 +30,7 @@ interface MainView {
     fun addPlayerCard(hand: Hand)
     fun addDealerCards(hands: List<Hand>)
     fun addPlayerCards(hands: List<Hand>)
-    fun showAllDealerHand(dealerHands: MutableList<Hand>)
+    fun showAllDealerHand(dealerHands: List<Hand>)
     fun showUserHand(hands: List<Hand>)
     fun showDealerHand(hands: List<Hand>)
     fun removeResult()

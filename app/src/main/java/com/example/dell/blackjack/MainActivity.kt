@@ -1,11 +1,10 @@
 package com.example.dell.blackjack
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -21,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 
 
-class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, InterstitialAdModel {
+class MainActivity : UserChipPref(), UserChip, MainView, InterstitialAdModel {
 
     private var interstitialAd: InterstitialAd? = null //インテンション広告用
     @SuppressLint("SetTextI18n")
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val betChip = intent.getIntExtra("BET_CHIP", -1).toChip()
+        val betChip = intent.getSerializableExtra("BET_CHIP") as Chip
         if (betChip.isEmpty()) {
             throw RuntimeException("ベットしたチップ数が取得できない")
         }
@@ -206,17 +205,17 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     }
 
     override fun setDealerScore(score: Score) {
-        setScore(score, "Dealer")
+        setScore(dealerCS, score, "Dealer")
     }
 
     override fun setPlayerScore(score: Score) {
-        setScore(score, "User")
+        setScore(playerCS, score, "User")
     }
 
-    private fun setScore(score: Score, name: String) {
+    private fun setScore(tv: TextView, score: Score, name: String) {
         val cc: Int = score.num
 
-        playerCS.text = when {
+        tv.text = when {
             score === Score.BlackJack -> "$name:$cc <BJ>"
             score is Score.Bust -> "$name:$cc <Bust>"
             else -> "$name:$cc"
@@ -255,6 +254,7 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     }
 
     override fun addDealerCard(hand: Hand) {
+        Log.d("main", "ディーラーカード追加$hand")
         dealerZone.addCard(hand)
     }
 
@@ -263,6 +263,7 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     }
 
     override fun addDealerCards(hands: List<Hand>) {
+        Log.d("main", "カード群追加$hands")
         hands.forEach { addDealerCard(it) }
     }
 
@@ -278,11 +279,14 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     }
 
     override fun showDealerHand(hands: List<Hand>) {
+        Log.d("main", "ディーラーハンド表示開始")
+        Log.d("main", "arg=$hands")
+        Log.d("main", "child=${dealerZone.childCount} hand=${hands.size}")
         if (dealerZone.childCount < hands.size) {
-            addPlayerCards(hands.subList(handZone.childCount, hands.size))
+            addDealerCards(hands.subList(dealerZone.childCount, hands.size))
         }
+        Log.d("main", "ディーラーハンド表示終了")
     }
-
 
     @SuppressLint("RtlHardcoded")
     private fun LinearLayout.addCard(hand: Hand) {
@@ -314,8 +318,11 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     }
 
     @SuppressLint("SetTextI18n")
-    override fun showAllDealerHand(dealerHands: MutableList<Hand>) {
+    override fun showAllDealerHand(dealerHands: List<Hand>) {
+        Log.d("activity", "ディーラーカードオープン処理")
         dealerZone.forEachChildWithIndex { index, view ->
+            Log.d("activity", "${index}のカードは${view.javaClass}")
+            // TODo TextViewが検知できない
             if (view is TextView) {
                 val hand = dealerHands[index]
                 if (view.text.isEmpty()) {
@@ -335,10 +342,6 @@ class MainActivity : AppCompatActivity(), MainView, AbstractPreferencesModel, In
     override fun showSocView() {
         socView.visibility = View.VISIBLE
     }
-
-    override val appContext: Context
-        get() = this.applicationContext
-
 
 }
 

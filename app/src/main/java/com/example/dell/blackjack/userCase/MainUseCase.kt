@@ -1,10 +1,10 @@
 package com.example.dell.blackjack.userCase
 
-import com.example.dell.blackjack.AbstractPreferencesModel
+import com.example.dell.blackjack.UserChipPref
 import com.example.dell.blackjack.domain.*
 
 class MainUseCase(
-        private val preferenceModel: AbstractPreferencesModel,
+        private val userChip: UserChipPref,
         val betChip: Chip,
         private val deck: Deck,
         private val dealer: Dealer,
@@ -27,14 +27,13 @@ class MainUseCase(
 
     fun dealerPlayTurn() {
         dealer.openHand()
-
-
         while (dealer.isDealerStopScore()) {
             val card = deck.dealCard()
             dealer.addCard(card)
         }
         turnEnd()
     }
+
 
     private fun turnEnd() {
         moveChip(issue)
@@ -67,8 +66,7 @@ class MainUseCase(
         }
 
     private fun moveChip(judge: Judge) {
-        user.chip += betChip * judge.dividendPercent
-        preferenceModel.setChip(user.chip)
+        userChip.saveChip(betChip * judge.dividendPercent)
     }
 
     fun initHand() {
@@ -76,16 +74,12 @@ class MainUseCase(
         dealer.makeHand(deck)
     }
 
-    fun openDealerHand() {
-        dealer.openHand()
-    }
-
     val lackChip: Boolean
-        get() = user.chip < betChip
+        get() = userChip.loadChip() < betChip
 
 
     val loadPlayerChip: Chip
-        get() = preferenceModel.loadChip()
+        get() = userChip.loadChip()
 
     val playerHand: MutableList<Hand>
         get() = user.hand

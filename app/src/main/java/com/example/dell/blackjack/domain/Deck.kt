@@ -1,20 +1,22 @@
 package com.example.dell.blackjack.domain
 
+import android.util.Log
+
 class Deck(deckCount: Int = 2) {
+    companion object {
+        private val suits = listOf("dia", "heart", "spade", "club")
+    }
+
     private var cards: List<Trump> = (1..deckCount).flatMap {
+        Log.d("deck", "decks$it")
         suits.flatMap { suit ->
             (1..13).map { num ->
-                when (num) {
-                    1 -> TrumpImpl(suit = suit, num = num)
-                    in (11..13) -> TrumpImpl(suit = suit, num = num)
-                    else -> TrumpImpl(suit = suit, num = num)
-                }
+                TrumpImpl(suit = suit, num = num)
             }
         }
-    }.shuffled()
+    }.shuffled().toList()
 
     private var i = 0
-    private val suits = listOf("dia", "heart", "spade", "club")
 
     private fun reset() {
         cards.shuffled()

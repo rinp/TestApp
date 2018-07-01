@@ -15,12 +15,14 @@ class MainPresenter(
     fun hit() {
         useCase.playerDrawCard()
 
+        val playerScore = useCase.playerScore
+
         view.showUserHand(useCase.playerHand)
-        view.setPlayerScore(useCase.playerScore)
+        view.setPlayerScore(playerScore)
         view.setDeckCount(useCase.remainingCardCount())
 
         //ブラックジャックの時はhitを止める(standを押させる)
-        if (useCase.playerScore === Score.BlackJack) {
+        if (playerScore === Score.BlackJack || playerScore is Score.Bust) {
             view.disabledHit()
         }
     }
@@ -29,6 +31,14 @@ class MainPresenter(
         //結果
 
         useCase.dealerPlayTurn()
+
+
+        view.setDealerScore(useCase.dealerScore)
+        useCase.dealerHand.let {
+            Log.d("presenter","letによるディーラーハンドの処理")
+            view.showAllDealerHand(it)
+            view.showDealerHand(it)
+        }
 
         view.setResult(useCase.issue)
 
@@ -67,10 +77,8 @@ class MainPresenter(
         }
 
         //TODO ここは手札の削除がされたことを基準に表示をなくすべき
-        //場のカード情報の削除
         view.removeAllCardZone()
 
-        //FIXME 勝敗表示の部分に何も書かないはできるのか
         view.removeResult()
 
         // 文字列まで変更されているのか？
@@ -82,41 +90,28 @@ class MainPresenter(
         useCase.initHand()
 
 
-        //合計値の表示
+        val dealerFirstScore: Score = useCase.dealerFirstScore
         val playerScore: Score = useCase.playerScore
-        val dealerScore: Score = useCase.dealerFirstScore
 
-        view.showUserHand(useCase.playerHand)
-
-        view.setPlayerScore(playerScore)
         view.setDeckCount(useCase.remainingCardCount())
-        view.enableHit()
-        view.enableStand()
-
         view.setUserChip(useCase.loadPlayerChip)
         view.renameBetChip(useCase.betChip)
 
-        if (playerScore === Score.BlackJack) {
-            //プレイヤー初回BJなら即勝負を掛けれるようにしとく(なくても良いやつ？)
-            view.disabledHit()
-            view.renameHitBtn("BJ")
-        }
-        if (dealerScore === Score.BlackJack) {
+        view.showUserHand(useCase.playerHand)
+        view.setPlayerScore(playerScore)
+
+        if (dealerFirstScore === Score.BlackJack || playerScore === Score.BlackJack) {
+
             //ディーラーBJだと強制勝負
-            useCase.openDealerHand()
-
-            view.showDealerHand(useCase.dealerHand)
-            view.setDealerScore(useCase.dealerScore)
-
-            view.setPlayerScore(playerScore)
-
-            view.disabledHit()
-            view.renameHitBtn("BJ")
-        } else {
-            view.setDealerScore(dealerScore)
-            view.showDealerHand(useCase.dealerHand)
-
+            stand()
+            return
         }
+
+        view.enableHit()
+        view.enableStand()
+
+        view.setDealerScore(useCase.dealerScore)
+        view.showDealerHand(useCase.dealerHand)
 
         Log.d("game", "zoneReset end")
     }

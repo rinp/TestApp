@@ -1,6 +1,8 @@
 package com.example.dell.blackjack.domain
 
-class Chip(var num: Int) {
+import java.io.Serializable
+
+class Chip(var num: Int) : Serializable {
 
     operator fun compareTo(betChip: Chip): Int {
         return this.num.compareTo(betChip.num)

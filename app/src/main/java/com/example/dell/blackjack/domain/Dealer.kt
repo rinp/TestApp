@@ -23,7 +23,7 @@ class Dealer : Player {
 
 
     fun isDealerStopScore(): Boolean {
-        return DEALER_STOP_SCR <= this.score.num
+        return this.score.num < DEALER_STOP_SCR
     }
 
 }
